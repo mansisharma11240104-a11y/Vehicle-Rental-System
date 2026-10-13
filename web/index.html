@@ -3,1459 +3,2434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheels & Ways | Vehicle Rental System</title>
+    <title>Wheels & Ways | Vehicle Rental Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #273549;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #38bdf8;
-            --accent-hover: #0284c7;
-            --green: #22c55e;
-            --amber: #f59e0b;
-            --blue: #06b6d4;
-            --red: #ef4444;
-            --border: #334155;
-            --radius: 12px;
+            /* Restrained Professional Palette */
+            --bg-app: #0d1117;
+            --bg-surface: #161b22;
+            --bg-elevated: #21262d;
+            --bg-hover: #292f39;
+            --border-subtle: #30363d;
+            --border-strong: #444c56;
+
+            /* Content Colors */
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+
+            /* Accent & Semantic (Muted, Non-glowing) */
+            --action-primary: #1f6feb;
+            --action-primary-hover: #388bfd;
+            --success-text: #3fb950;
+            --success-bg: rgba(46, 160, 67, 0.12);
+            --success-border: rgba(46, 160, 67, 0.35);
+
+            --warning-text: #d29922;
+            --warning-bg: rgba(210, 153, 34, 0.12);
+            --warning-border: rgba(210, 153, 34, 0.35);
+
+            --info-text: #58a6ff;
+            --info-bg: rgba(56, 139, 253, 0.12);
+            --info-border: rgba(56, 139, 253, 0.35);
+
+            --danger-text: #f85149;
+            --danger-bg: rgba(248, 81, 73, 0.12);
+            --danger-border: rgba(248, 81, 73, 0.35);
+
+            --purple-text: #bc8cff;
+            --purple-bg: rgba(188, 140, 255, 0.12);
+            --purple-border: rgba(188, 140, 255, 0.35);
+
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
+            background-color: var(--bg-app);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13.5px;
+            line-height: 1.5;
             min-height: 100vh;
-            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1300px;
+        /* Monospace elements for IDs and Plate Numbers */
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+        }
+
+        /* Application Header */
+        header.app-header {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background-color: var(--action-primary);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            border-left: 1px solid var(--border-subtle);
+            padding-left: 10px;
+            margin-left: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Top Nav Tabs */
+        nav.app-nav {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 24px;
+            display: flex;
+            gap: 2px;
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 12px 14px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            color: var(--action-primary-hover);
+            border-bottom-color: var(--action-primary);
+            font-weight: 600;
+        }
+
+        .nav-badge {
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            font-size: 11px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Main Workspace Container */
+        main.workspace {
+            flex: 1;
+            padding: 20px 24px 40px;
+            max-width: 1440px;
+            width: 100%;
             margin: 0 auto;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .header-title h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-title p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 4px;
-        }
-
-        .header-badges {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .server-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            padding: 6px 14px;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #22c55e;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #22c55e;
-        }
-
-        .mode-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(56, 189, 248, 0.15);
-            color: #38bdf8;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
+        /* Compact Operational Summary Bar */
+        .summary-bar {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-title {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-        }
-
-        .val-green { color: #4ade80; }
-        .val-amber { color: #fbbf24; }
-        .val-blue { color: #38bdf8; }
-        .val-purple { color: #c084fc; }
-
-        /* Toolbar */
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
             margin-bottom: 20px;
         }
 
-        .tabs {
+        .summary-metric {
             display: flex;
-            background: var(--bg-secondary);
-            padding: 4px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            overflow-x: auto;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0 8px;
+            border-right: 1px solid var(--border-subtle);
         }
 
-        .tab-btn {
-            background: transparent;
-            border: none;
+        .summary-metric:last-child {
+            border-right: none;
+        }
+
+        .metric-label {
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .metric-sub {
+            font-size: 11px;
             color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 8px;
+            font-weight: 400;
+        }
+
+        /* Section Header & Operational Filters */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-title-group h2 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-title-group p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .controls-toolbar {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 280px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+            max-width: 380px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--bg-app);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 7px 10px 7px 30px;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: var(--action-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .filter-select {
+            background-color: var(--bg-app);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 7px 10px;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            outline: none;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--action-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 7px 13px;
+            font-size: 12.5px;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            text-decoration: none;
             white-space: nowrap;
         }
 
-        .tab-btn.active {
-            background: var(--accent);
-            color: #0f172a;
+        .btn-primary {
+            background-color: var(--action-primary);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
-        .action-btns {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        .btn-primary:hover {
+            background-color: var(--action-primary-hover);
         }
 
-        .btn {
-            padding: 9px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
+        .btn-secondary {
+            background-color: var(--bg-elevated);
+            color: var(--text-primary);
+            border-color: var(--border-subtle);
         }
 
-        .btn-primary { background: var(--accent); color: #0f172a; }
-        .btn-primary:hover { background: var(--accent-hover); }
-        .btn-success { background: var(--green); color: #0f172a; }
-        .btn-warning { background: var(--amber); color: #0f172a; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: var(--bg-card); }
-
-        /* Fleet Cards */
-        .vehicle-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 20px;
+        .btn-secondary:hover {
+            background-color: var(--bg-hover);
+            border-color: var(--border-strong);
         }
 
-        .v-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .v-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent);
+        .btn-success {
+            background-color: #238636;
+            color: #ffffff;
         }
 
-        .v-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
+        .btn-success:hover {
+            background-color: #2ea043;
         }
 
-        .v-id {
-            background: #334155;
-            color: #e2e8f0;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+        .btn-danger {
+            background-color: #da3633;
+            color: #ffffff;
         }
 
-        .v-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-top: 4px;
+        .btn-danger:hover {
+            background-color: #f85149;
         }
 
-        .v-cat-badge {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 500;
+        .btn-sm {
+            padding: 4px 9px;
+            font-size: 11.5px;
         }
 
-        .badge-status {
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .status-AVAILABLE {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.4);
-        }
-        .status-RENTED {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.4);
-        }
-        .status-CLEANING {
-            background: rgba(6, 182, 212, 0.2);
-            color: #22d3ee;
-            border: 1px solid rgba(6, 182, 212, 0.4);
+        /* Tables (Primary Professional Interface) */
+        .table-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        .v-specs {
-            background: var(--bg-card);
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin: 14px 0;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-        }
-
-        .v-rates {
-            display: flex;
-            justify-content: space-between;
-            padding-bottom: 14px;
-            margin-bottom: 14px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .rate-item span {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .rate-item strong {
-            font-size: 1.05rem;
-            color: #f1f5f9;
-        }
-
-        .rental-info-box {
-            background: rgba(245, 158, 11, 0.1);
-            border-left: 3px solid var(--amber);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.82rem;
-            margin-bottom: 14px;
-        }
-
-        .v-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .v-actions .btn {
-            flex: 1;
-            justify-content: center;
-        }
-
-        /* Cleaning Bay View */
-        .queue-container {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-        }
-
-        .queue-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .queue-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px 18px;
-        }
-
-        .queue-pos {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--accent);
-            width: 40px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: var(--text-muted);
-        }
-
-        /* History Table */
         .table-responsive {
             overflow-x: auto;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            width: 100%;
         }
 
-        table {
+        table.data-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 13px;
         }
 
-        th {
-            background: #192231;
-            padding: 12px 16px;
-            font-weight: 700;
+        table.data-table th {
+            background-color: #12161c;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+
+        table.data-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            vertical-align: middle;
+            color: var(--text-primary);
+        }
+
+        table.data-table tbody tr {
+            transition: background-color 0.1s;
+        }
+
+        table.data-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        table.data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Registration Plate Badge (Realistic Indian Format) */
+        .plate-badge {
+            background: #24292e;
+            border: 1px solid #444d56;
+            color: #e1e4e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        /* Status Badges */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-available {
+            color: var(--success-text);
+            background: var(--success-bg);
+            border-color: var(--success-border);
+        }
+        .status-available .status-dot { background: var(--success-text); }
+
+        .status-rented {
+            color: var(--warning-text);
+            background: var(--warning-bg);
+            border-color: var(--warning-border);
+        }
+        .status-rented .status-dot { background: var(--warning-text); }
+
+        .status-cleaning {
+            color: var(--info-text);
+            background: var(--info-bg);
+            border-color: var(--info-border);
+        }
+        .status-cleaning .status-dot { background: var(--info-text); }
+
+        .status-maintenance {
+            color: var(--purple-text);
+            background: var(--purple-bg);
+            border-color: var(--purple-border);
+        }
+        .status-maintenance .status-dot { background: var(--purple-text); }
+
+        .status-overdue {
+            color: var(--danger-text);
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+        }
+        .status-overdue .status-dot { background: var(--danger-text); }
+
+        /* Action Buttons in Table */
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 48px 24px;
+            text-align: center;
             color: var(--text-muted);
-            border-bottom: 1px solid var(--border);
         }
 
-        td {
-            padding: 14px 16px;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        .empty-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            opacity: 0.6;
         }
 
-        /* Modals */
+        .empty-text {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .empty-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Modals & Dialogs */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background-color: rgba(1, 4, 9, 0.75);
             display: none;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 1000;
             padding: 16px;
-            backdrop-filter: blur(4px);
         }
 
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active {
+            display: flex;
+        }
 
-        .modal-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+        .modal-window {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
             width: 100%;
-            max-width: 520px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            overflow: hidden;
-            animation: popIn 0.2s ease-out;
+            max-width: 580px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            animation: modalFadeIn 0.15s ease-out;
         }
 
-        @keyframes popIn {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .modal-header {
-            padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
         }
 
-        .modal-header h2 { font-size: 1.25rem; }
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
 
-        .btn-close {
+        .modal-close-btn {
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 1.5rem;
+            font-size: 18px;
             cursor: pointer;
+            padding: 2px 6px;
+            line-height: 1;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-close-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
         }
 
         .modal-body {
-            padding: 24px;
+            padding: 18px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--border-subtle);
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            justify-content: flex-end;
+            gap: 10px;
+            background-color: #12161c;
+        }
+
+        /* Form Controls */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-full {
+            grid-column: 1 / -1;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
-        .form-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #cbd5e1;
+        .form-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
 
-        .form-input, .form-select {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.95rem;
+        .form-control {
+            background-color: var(--bg-app);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            padding: 8px 10px;
+            font-size: 13px;
             outline: none;
+            transition: border-color 0.15s;
         }
 
-        .form-input:focus, .form-select:focus { border-color: var(--accent); }
-
-        .price-preview-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px;
-            font-size: 0.9rem;
+        .form-control:focus {
+            border-color: var(--action-primary);
         }
 
-        .preview-row {
+        .form-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Invoice & Calculation Breakdown Box */
+        .calculation-card {
+            background-color: var(--bg-app);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+
+        .calc-row {
             display: flex;
             justify-content: space-between;
+            font-size: 12.5px;
+            color: var(--text-secondary);
             margin-bottom: 6px;
         }
 
-        .preview-total {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent);
-            border-top: 1px dashed var(--border);
+        .calc-row.total-row {
+            border-top: 1px solid var(--border-subtle);
             padding-top: 8px;
             margin-top: 8px;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 14px;
         }
 
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 1px solid var(--border);
+        /* Printable Receipt / Voucher Sheet */
+        .voucher-sheet {
+            background: #ffffff;
+            color: #1a1a1a;
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .voucher-header {
+            text-align: center;
+            border-bottom: 1px dashed #666;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+
+        .voucher-header h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #000;
+        }
+
+        .voucher-row {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .voucher-divider {
+            border: none;
+            border-top: 1px dashed #888;
+            margin: 10px 0;
+        }
+
+        .voucher-total {
+            font-size: 14px;
+            font-weight: 800;
+            color: #000;
+        }
+
+        /* Operational Queue Details */
+        .queue-item-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .queue-pos-badge {
+            background-color: var(--bg-elevated);
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* Audit Operations Stack Log */
+        .audit-stack {
+            border-left: 2px solid var(--border-subtle);
+            padding-left: 14px;
+            margin-top: 12px;
+        }
+
+        .audit-entry {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* App Footer */
+        footer.app-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 14px 24px;
+            background-color: var(--bg-surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
             gap: 10px;
         }
 
-        /* Invoice Sheet */
-        .invoice-box {
-            background: #ffffff;
-            color: #0f172a;
-            border-radius: 8px;
-            padding: 24px;
-            font-family: monospace;
-        }
-        .invoice-title {
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-bottom: 2px dashed #000;
-            padding-bottom: 10px;
-            margin-bottom: 14px;
-        }
-        .inv-row {
+        .footer-tech-note {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
+            align-items: center;
+            gap: 12px;
         }
-        .inv-total {
-            border-top: 2px dashed #000;
-            margin-top: 12px;
-            padding-top: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
+
+        .pill-tag {
+            background-color: var(--bg-elevated);
+            color: var(--text-secondary);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Top Header -->
-    <header>
-        <div class="header-title">
-            <h1>🚗 Wheels & Ways</h1>
-            <p>Vehicle Rental & Fleet Management System (2-Wheelers & 4-Wheelers)</p>
-        </div>
-        <div class="header-badges">
-            <div class="server-status">
-                <span class="pulse-dot"></span>
-                <span id="env-badge-text">Live Dashboard</span>
+    <!-- Professional Application Header -->
+    <header class="app-header">
+        <div class="brand-container">
+            <span class="brand-badge">RMS</span>
+            <div class="brand-title">
+                Wheels & Ways
+                <span class="brand-subtitle">Vehicle Rental & Fleet Management</span>
             </div>
-            <span class="mode-badge" id="mode-badge">⚡ Interactive Engine</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary btn-sm" onclick="openAddVehicleModal()">
+                + Register New Vehicle
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openRentModal()">
+                Rent Out Vehicle
+            </button>
         </div>
     </header>
 
-    <!-- Stats KPI Cards -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-title">Total Fleet</span>
-            <span class="stat-value" id="stat-total">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-title">Available</span>
-            <span class="stat-value val-green" id="stat-available">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-title">Currently Rented</span>
-            <span class="stat-value val-amber" id="stat-rented">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-title">Cleaning Queue</span>
-            <span class="stat-value val-blue" id="stat-cleaning">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-title">Total Revenue</span>
-            <span class="stat-value val-purple" id="stat-revenue">Rs. 0</span>
-        </div>
-    </div>
+    <!-- Top Navigation System Tabs -->
+    <nav class="app-nav">
+        <button class="nav-item active" onclick="switchNavTab('dashboard')">
+            Dashboard
+        </button>
+        <button class="nav-item" onclick="switchNavTab('inventory-all')">
+            All Fleet <span class="nav-badge" id="badge-fleet-count">0</span>
+        </button>
+        <button class="nav-item" onclick="switchNavTab('inventory-two')">
+            2-Wheelers
+        </button>
+        <button class="nav-item" onclick="switchNavTab('inventory-four')">
+            4-Wheelers
+        </button>
+        <button class="nav-item" onclick="switchNavTab('active-rentals')">
+            Active Rentals <span class="nav-badge" id="badge-rented-count">0</span>
+        </button>
+        <button class="nav-item" onclick="switchNavTab('cleaning-bay')">
+            Cleaning & Service <span class="nav-badge" id="badge-cleaning-count">0</span>
+        </button>
+        <button class="nav-item" onclick="switchNavTab('ledger')">
+            Rental Ledger
+        </button>
+    </nav>
 
-    <!-- Toolbar: Tabs & Buttons -->
-    <div class="toolbar">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('all')">All Fleet</button>
-            <button class="tab-btn" onclick="switchTab('two')">🛵 2-Wheelers</button>
-            <button class="tab-btn" onclick="switchTab('four')">🚗 4-Wheelers</button>
-            <button class="tab-btn" onclick="switchTab('cleaning')">🧼 Cleaning Bay (<span id="tab-cleaning-count">0</span>)</button>
-            <button class="tab-btn" onclick="switchTab('history')">📜 Rental Ledger</button>
-        </div>
-        <div class="action-btns">
-            <button class="btn btn-outline" onclick="openAddVehicleModal()">➕ Add Vehicle</button>
-            <button class="btn btn-primary" onclick="openRentModal()">🔑 Rent Vehicle</button>
-            <button class="btn btn-warning" onclick="openReturnModal()">🔄 Return Vehicle</button>
-        </div>
-    </div>
+    <!-- Main Workspace Container -->
+    <main class="workspace">
 
-    <!-- View: Vehicle Fleet Grid -->
-    <div id="fleet-view">
-        <div class="vehicle-grid" id="vehicle-grid"></div>
-    </div>
+        <!-- Operational Fleet Summary Bar -->
+        <section class="summary-bar">
+            <div class="summary-metric">
+                <span class="metric-label">Total Fleet</span>
+                <span class="metric-value font-mono" id="sum-total-fleet">0</span>
+                <span class="metric-sub">Registered Vehicles</span>
+            </div>
+            <div class="summary-metric">
+                <span class="metric-label">Available for Rent</span>
+                <span class="metric-value font-mono" style="color: var(--success-text);" id="sum-available">0</span>
+                <span class="metric-sub">Ready to deploy</span>
+            </div>
+            <div class="summary-metric">
+                <span class="metric-label">Currently Rented</span>
+                <span class="metric-value font-mono" style="color: var(--warning-text);" id="sum-rented">0</span>
+                <span class="metric-sub">In customer use</span>
+            </div>
+            <div class="summary-metric">
+                <span class="metric-label">Awaiting Cleaning/Service</span>
+                <span class="metric-value font-mono" style="color: var(--info-text);" id="sum-cleaning">0</span>
+                <span class="metric-sub">FIFO Queue Bay</span>
+            </div>
+            <div class="summary-metric">
+                <span class="metric-label">Overdue Rentals</span>
+                <span class="metric-value font-mono" style="color: var(--danger-text);" id="sum-overdue">0</span>
+                <span class="metric-sub">Subject to late fines</span>
+            </div>
+            <div class="summary-metric">
+                <span class="metric-label">Completed Revenue</span>
+                <span class="metric-value font-mono" id="sum-revenue">₹0</span>
+                <span class="metric-sub" id="sum-fines-sub">+ ₹0 in late fines</span>
+            </div>
+        </section>
 
-    <!-- View: Cleaning Bay Queue -->
-    <div id="cleaning-view" style="display: none;">
-        <div class="queue-container">
-            <div class="queue-header">
-                <div>
-                    <h2>🧼 Vehicle Sanitization & Cleaning Bay</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">
-                        Operates as a <strong>FIFO Queue (First In, First Out)</strong>. Returned vehicles are automatically queued here.
-                    </p>
+        <!-- VIEW 1: VEHICLE INVENTORY (PRIMARY TABLE) -->
+        <section id="view-inventory">
+            <div class="section-header">
+                <div class="section-title-group">
+                    <h2 id="inventory-view-title">Vehicle Fleet Inventory</h2>
+                    <p id="inventory-view-desc">Complete overview of registered 2-wheelers and 4-wheelers with rates and operational statuses.</p>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="cleanNextVehicle()">Clean Next in Line</button>
-                    <button class="btn btn-success" onclick="cleanAllVehicles()">Clean & Restock All</button>
+                <div>
+                    <button class="btn btn-secondary btn-sm" onclick="exportFleetCsv()">
+                        Export CSV
+                    </button>
                 </div>
             </div>
-            <div id="queue-list" class="queue-list"></div>
+
+            <!-- Filters & Search Toolbar -->
+            <div class="controls-toolbar">
+                <div class="search-filter-group">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="inventory-search" placeholder="Search by ID, model, or reg. number..." oninput="filterAndRenderInventory()">
+                    </div>
+                    <select class="filter-select" id="filter-category" onchange="filterAndRenderInventory()">
+                        <option value="ALL">All Categories</option>
+                        <option value="TWO_WHEELER">2-Wheelers Only</option>
+                        <option value="FOUR_WHEELER">4-Wheelers Only</option>
+                    </select>
+                    <select class="filter-select" id="filter-status" onchange="filterAndRenderInventory()">
+                        <option value="ALL">All Statuses</option>
+                        <option value="AVAILABLE">Available</option>
+                        <option value="RENTED">Rented</option>
+                        <option value="CLEANING">Cleaning</option>
+                        <option value="MAINTENANCE">Maintenance</option>
+                    </select>
+                </div>
+                <div>
+                    <select class="filter-select" id="sort-by" onchange="filterAndRenderInventory()">
+                        <option value="ID_ASC">Sort: Vehicle ID</option>
+                        <option value="RATE_ASC">Daily Rate: Low to High</option>
+                        <option value="RATE_DESC">Daily Rate: High to Low</option>
+                        <option value="STATUS">Status</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Data Table Card -->
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle ID</th>
+                                <th>Vehicle Name & Model</th>
+                                <th>Category</th>
+                                <th>Reg. Number</th>
+                                <th>Daily Rate</th>
+                                <th>Late Fine / Day</th>
+                                <th>Current Status</th>
+                                <th>Current Renter</th>
+                                <th style="text-align: right;">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-tbody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: ACTIVE RENTALS VIEW -->
+        <section id="view-active-rentals" style="display: none;">
+            <div class="section-header">
+                <div class="section-title-group">
+                    <h2>Active Vehicle Rentals</h2>
+                    <p>Vehicles currently out with customers. Manage early or overdue returns.</p>
+                </div>
+            </div>
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle ID</th>
+                                <th>Model & Reg.</th>
+                                <th>Customer Name</th>
+                                <th>Contact Number</th>
+                                <th>Rental Period</th>
+                                <th>Booked Days</th>
+                                <th>Daily Rate</th>
+                                <th>Security Deposit</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="active-rentals-tbody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: CLEANING & MAINTENANCE BAY (FIFO QUEUE) -->
+        <section id="view-cleaning-bay" style="display: none;">
+            <div class="section-header">
+                <div class="section-title-group">
+                    <h2>Cleaning & Maintenance Bay</h2>
+                    <p>Operational service pipeline maintained as a <strong>FIFO (First-In, First-Out) Queue</strong>. Vehicles returned from rentals enter this bay before re-entering available inventory.</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" onclick="processServiceQueue('NEXT')">
+                        Service Next in Line
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="processServiceQueue('ALL')">
+                        Complete All in Bay
+                    </button>
+                </div>
+            </div>
+
+            <div id="cleaning-bay-list">
+                <!-- Injected dynamically -->
+            </div>
+        </section>
+
+        <!-- VIEW 4: RENTAL TRANSACTION LEDGER -->
+        <section id="view-ledger" style="display: none;">
+            <div class="section-header">
+                <div class="section-title-group">
+                    <h2>Rental Transaction Ledger</h2>
+                    <p>Auditable historical record of completed rental invoices, late fine calculations, and settled deposits.</p>
+                </div>
+            </div>
+
+            <!-- Ledger Filter Toolbar -->
+            <div class="controls-toolbar">
+                <div class="search-filter-group">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="ledger-search" placeholder="Search by Rental ID, customer, or vehicle..." oninput="renderLedgerTable()">
+                    </div>
+                    <select class="filter-select" id="ledger-filter-status" onchange="renderLedgerTable()">
+                        <option value="ALL">All Records</option>
+                        <option value="COMPLETED">Settled & Completed</option>
+                        <option value="OVERDUE">With Late Return Fines</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rental ID</th>
+                                <th>Customer Name</th>
+                                <th>Vehicle</th>
+                                <th>Reg. Number</th>
+                                <th>Booked / Actual Days</th>
+                                <th>Base Charge</th>
+                                <th>Late Fine</th>
+                                <th>Security Deposit</th>
+                                <th>Total Settlement</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-tbody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Application Footer -->
+    <footer class="app-footer">
+        <div>
+            <strong>Wheels & Ways</strong> Office Management Console &bull; Internal System
+        </div>
+        <div class="footer-tech-note">
+            <span>C++ Conceptual Alignment:</span>
+            <span class="pill-tag">Inventory: Vector</span>
+            <span class="pill-tag">Cleaning: FIFO Queue</span>
+            <span class="pill-tag">Audit: Transaction Ledger</span>
+        </div>
+    </footer>
+
+    <!-- ================= MODALS & DIALOGS ================= -->
+
+    <!-- 1. MODAL: RENT A VEHICLE -->
+    <div class="modal-overlay" id="modal-rent">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title">Rent Out Vehicle</div>
+                <button class="modal-close-btn" onclick="closeModal('modal-rent')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group form-full">
+                        <label class="form-label">Select Available Vehicle *</label>
+                        <select class="form-control" id="rent-vehicle-select" onchange="onRentVehicleSelectChange()">
+                            <!-- Available vehicles populated -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Customer Full Name *</label>
+                        <input type="text" class="form-control" id="rent-customer-name" placeholder="e.g. Suresh Raina">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Contact Number (10 digits) *</label>
+                        <input type="tel" class="form-control" id="rent-customer-phone" placeholder="e.g. 9876543210" maxlength="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rental Start Date</label>
+                        <input type="date" class="form-control font-mono" id="rent-start-date" onchange="recalculateRentCost()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Expected Return Date *</label>
+                        <input type="date" class="form-control font-mono" id="rent-return-date" onchange="recalculateRentCost()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Security Deposit (₹)</label>
+                        <input type="number" class="form-control font-mono" id="rent-deposit" value="1000" min="0" oninput="recalculateRentCost()">
+                        <span class="form-hint">Refundable upon vehicle return</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Daily Rental Rate</label>
+                        <input type="text" class="form-control font-mono" id="rent-display-rate" readonly style="background: var(--bg-elevated); color: var(--text-secondary);">
+                    </div>
+
+                    <div class="form-full">
+                        <div class="calculation-card">
+                            <div class="calc-row">
+                                <span>Duration:</span>
+                                <strong class="font-mono" id="rent-calc-days">1 day(s)</strong>
+                            </div>
+                            <div class="calc-row">
+                                <span>Base Rental Amount:</span>
+                                <span class="font-mono" id="rent-calc-base">₹0.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Security Deposit:</span>
+                                <span class="font-mono" id="rent-calc-deposit">₹1,000.00</span>
+                            </div>
+                            <div class="calc-row total-row">
+                                <span>Advance Estimated Payable:</span>
+                                <span class="font-mono" id="rent-calc-total">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-rent')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitRentalBooking()">Confirm & Dispatch Vehicle</button>
+            </div>
         </div>
     </div>
 
-    <!-- View: Transaction History -->
-    <div id="history-view" style="display: none;">
-        <div class="table-responsive">
-            <table>
-                <thead>
+    <!-- 2. MODAL: RETURN VEHICLE & LATE FINE CALCULATION -->
+    <div class="modal-overlay" id="modal-return">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title">Process Vehicle Return</div>
+                <button class="modal-close-btn" onclick="closeModal('modal-return')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group form-full">
+                        <label class="form-label">Select Rented Vehicle to Return *</label>
+                        <select class="form-control" id="return-vehicle-select" onchange="onReturnVehicleSelectChange()">
+                            <!-- Populated with rented vehicles -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="return-display-customer" readonly style="background: var(--bg-elevated); color: var(--text-secondary);">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Booked Rental Period</label>
+                        <input type="text" class="form-control font-mono" id="return-display-dates" readonly style="background: var(--bg-elevated); color: var(--text-secondary);">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Actual Return Date *</label>
+                        <input type="date" class="form-control font-mono" id="return-actual-date" onchange="recalculateReturnSettlement()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional Charges (Fuel/Tolls/Damage) (₹)</label>
+                        <input type="number" class="form-control font-mono" id="return-extra-charges" value="0" min="0" oninput="recalculateReturnSettlement()">
+                    </div>
+
+                    <!-- CRITICAL WORKFLOW STEP: NEXT STATUS -->
+                    <div class="form-group form-full">
+                        <label class="form-label">Select Vehicle Next Status after Return *</label>
+                        <select class="form-control" id="return-next-status">
+                            <option value="CLEANING">Cleaning Bay (Needs standard post-rental wash & interior cleaning)</option>
+                            <option value="MAINTENANCE">Maintenance (Requires mechanical inspection or repairs)</option>
+                            <option value="AVAILABLE">Available (Clean, inspected, ready for immediate rental)</option>
+                        </select>
+                        <span class="form-hint">Vehicle will not become available if sent for cleaning or maintenance.</span>
+                    </div>
+
+                    <div class="form-full">
+                        <div class="calculation-card">
+                            <div class="calc-row">
+                                <span>Booked Duration:</span>
+                                <span class="font-mono" id="return-calc-booked-days">0 days</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Actual Duration:</span>
+                                <span class="font-mono" id="return-calc-actual-days">0 days</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Overdue Duration:</span>
+                                <span class="font-mono" id="return-calc-overdue-days" style="color: var(--danger-text); font-weight: 600;">0 days</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Base Rental Charge:</span>
+                                <span class="font-mono" id="return-calc-base">₹0.00</span>
+                            </div>
+                            <div class="calc-row" id="return-row-fine">
+                                <span>Late Return Fine:</span>
+                                <span class="font-mono" id="return-calc-fine" style="color: var(--danger-text); font-weight: 600;">₹0.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Security Deposit Received:</span>
+                                <span class="font-mono" id="return-calc-deposit" style="color: var(--info-text);">- ₹0.00</span>
+                            </div>
+                            <div class="calc-row total-row">
+                                <span>Final Settlement Due:</span>
+                                <span class="font-mono" id="return-calc-total">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-return')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitVehicleReturn()">Process Settlement & Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL: VEHICLE SPECIFICATION & DETAILS -->
+    <div class="modal-overlay" id="modal-vehicle-details">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title" id="details-modal-title">Vehicle Technical Specifications</div>
+                <button class="modal-close-btn" onclick="closeModal('modal-vehicle-details')">&times;</button>
+            </div>
+            <div class="modal-body" id="details-modal-content">
+                <!-- Injected dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-vehicle-details')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL: REGISTER NEW VEHICLE -->
+    <div class="modal-overlay" id="modal-add-vehicle">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title">Register New Fleet Vehicle</div>
+                <button class="modal-close-btn" onclick="closeModal('modal-add-vehicle')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select class="form-control" id="add-category" onchange="toggleAddVehicleCategoryFields()">
+                            <option value="TWO_WHEELER">2-Wheeler (Motorcycle / Scooter)</option>
+                            <option value="FOUR_WHEELER">4-Wheeler (Car / SUV)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Internal Vehicle ID *</label>
+                        <input type="text" class="form-control font-mono" id="add-id" placeholder="e.g. TW105 or FW205">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Manufacturer Brand *</label>
+                        <input type="text" class="form-control" id="add-brand" placeholder="e.g. Royal Enfield">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Model Name *</label>
+                        <input type="text" class="form-control" id="add-model" placeholder="e.g. Hunter 350">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Registration Plate Number *</label>
+                        <input type="text" class="form-control font-mono" id="add-reg" placeholder="e.g. DL 01 AB 9988">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Daily Rental Rate (₹) *</label>
+                        <input type="number" class="form-control font-mono" id="add-rate" placeholder="e.g. 850">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Late Return Fine / Day (₹) *</label>
+                        <input type="number" class="form-control font-mono" id="add-fine" placeholder="e.g. 250">
+                    </div>
+
+                    <!-- 2-Wheeler specific fields -->
+                    <div id="add-tw-block" class="form-grid form-full" style="display: contents;">
+                        <div class="form-group">
+                            <label class="form-label">Engine Displacement (CC)</label>
+                            <input type="number" class="form-control font-mono" id="add-cc" placeholder="e.g. 350">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Transmission / Type</label>
+                            <select class="form-control" id="add-geared">
+                                <option value="Geared">Geared Motorcycle</option>
+                                <option value="Automatic">Automatic / Scooter</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 4-Wheeler specific fields -->
+                    <div id="add-fw-block" class="form-grid form-full" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Seating Capacity</label>
+                            <input type="number" class="form-control font-mono" id="add-seats" placeholder="e.g. 5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Transmission</label>
+                            <select class="form-control" id="add-transmission">
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automatic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fuel Type</label>
+                            <select class="form-control" id="add-fuel">
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Electric">Electric</option>
+                                <option value="CNG">CNG</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-add-vehicle')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitRegisterVehicle()">Save & Add to Fleet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. MODAL: RENTAL INVOICE & RECEIPT VOUCHER -->
+    <div class="modal-overlay" id="modal-invoice">
+        <div class="modal-window" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Rental Settlement Receipt</div>
+                <button class="modal-close-btn" onclick="closeModal('modal-invoice')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="voucher-sheet" id="invoice-sheet-container">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="window.print()">Print Receipt</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-invoice')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT APPLICATION CORE ================= -->
+    <script>
+        /**
+         * Wheels & Ways - Vehicle Rental Management Engine
+         * Built with clean OOP models mirroring the C++ terminal architecture:
+         * 1. Fleet Inventory Vector
+         * 2. Cleaning Bay FIFO Queue
+         * 3. Rental Transaction Ledger
+         */
+
+        // Initial realistic Indian Vehicle Fleet Data
+        const INITIAL_FLEET = [
+            {
+                id: "TW101",
+                brand: "Honda",
+                model: "Activa 6G",
+                category: "2-Wheeler",
+                type: "TWO_WHEELER",
+                regNumber: "DL 01 AB 1234",
+                dailyRate: 350,
+                lateFine: 100,
+                status: "AVAILABLE",
+                specs: "110cc, Automatic Scooter, Helmet Provided",
+                currentRenter: null
+            },
+            {
+                id: "TW102",
+                brand: "Royal Enfield",
+                model: "Classic 350",
+                category: "2-Wheeler",
+                type: "TWO_WHEELER",
+                regNumber: "HR 26 BC 5678",
+                dailyRate: 900,
+                lateFine: 300,
+                status: "RENTED",
+                specs: "349cc, 5-Speed Geared, Dual-Channel ABS",
+                currentRenter: {
+                    name: "Rahul Sharma",
+                    phone: "9876543210",
+                    startDate: "2026-10-10",
+                    expectedReturnDate: "2026-10-13",
+                    bookedDays: 3,
+                    deposit: 1500
+                }
+            },
+            {
+                id: "TW103",
+                brand: "Yamaha",
+                model: "R15 V4",
+                category: "2-Wheeler",
+                type: "TWO_WHEELER",
+                regNumber: "MH 02 DE 9012",
+                dailyRate: 750,
+                lateFine: 250,
+                status: "AVAILABLE",
+                specs: "155cc, 6-Speed Geared, Quick Shifter",
+                currentRenter: null
+            },
+            {
+                id: "TW104",
+                brand: "TVS",
+                model: "Jupiter 125",
+                category: "2-Wheeler",
+                type: "TWO_WHEELER",
+                regNumber: "KA 05 FG 3456",
+                dailyRate: 380,
+                lateFine: 120,
+                status: "CLEANING",
+                specs: "124cc, Automatic Scooter, Front Disc",
+                currentRenter: null
+            },
+            {
+                id: "FW201",
+                brand: "Maruti Suzuki",
+                model: "Swift Dzire",
+                category: "4-Wheeler",
+                type: "FOUR_WHEELER",
+                regNumber: "DL 03 GH 7890",
+                dailyRate: 1600,
+                lateFine: 500,
+                status: "AVAILABLE",
+                specs: "5-Seater, Manual, Petrol, AC, Boot Space",
+                currentRenter: null
+            },
+            {
+                id: "FW202",
+                brand: "Hyundai",
+                model: "Creta SX",
+                category: "4-Wheeler",
+                type: "FOUR_WHEELER",
+                regNumber: "HR 29 JK 1234",
+                dailyRate: 2500,
+                lateFine: 800,
+                status: "AVAILABLE",
+                specs: "5-Seater, Automatic, Diesel, Panoramic Sunroof",
+                currentRenter: null
+            },
+            {
+                id: "FW203",
+                brand: "Mahindra",
+                model: "Thar 4x4",
+                category: "4-Wheeler",
+                type: "FOUR_WHEELER",
+                regNumber: "MH 12 LM 5678",
+                dailyRate: 3200,
+                lateFine: 1000,
+                status: "RENTED",
+                specs: "4-Seater, 4WD Manual, Diesel, Hardtop",
+                currentRenter: {
+                    name: "Priya Patel",
+                    phone: "9123456789",
+                    startDate: "2026-10-11",
+                    expectedReturnDate: "2026-10-13",
+                    bookedDays: 2,
+                    deposit: 5000
+                }
+            },
+            {
+                id: "FW204",
+                brand: "Toyota",
+                model: "Innova Crysta",
+                category: "4-Wheeler",
+                type: "FOUR_WHEELER",
+                regNumber: "KA 01 NP 9012",
+                dailyRate: 3800,
+                lateFine: 1200,
+                status: "AVAILABLE",
+                specs: "7-Seater, Automatic, Diesel, Captain Seats",
+                currentRenter: null
+            }
+        ];
+
+        // Initial Completed Rental Ledger
+        const INITIAL_LEDGER = [
+            {
+                rentalId: "RNT-1001",
+                vehicleId: "FW201",
+                vehicleName: "Maruti Suzuki Swift Dzire",
+                regNumber: "DL 03 GH 7890",
+                category: "4-Wheeler",
+                customerName: "Amit Kumar",
+                customerPhone: "9988776655",
+                startDate: "2026-10-08",
+                expectedReturnDate: "2026-10-10",
+                actualReturnDate: "2026-10-11",
+                bookedDays: 2,
+                actualDays: 3,
+                overdueDays: 1,
+                dailyRate: 1600,
+                baseFare: 3200,
+                lateFineRate: 500,
+                totalFine: 500,
+                deposit: 3000,
+                additionalCharges: 0,
+                totalBill: 3700,
+                status: "COMPLETED"
+            }
+        ];
+
+        // Initial Service Bay Queue (FIFO Queue structure)
+        const INITIAL_CLEANING_QUEUE = [
+            {
+                vehicleId: "TW104",
+                vehicleName: "TVS Jupiter 125",
+                regNumber: "KA 05 FG 3456",
+                category: "2-Wheeler",
+                previousRenter: "Vikas Verma",
+                entryDate: "2026-10-13",
+                serviceType: "CLEANING",
+                notes: "Standard post-rental water wash and sanitization",
+                condition: "Good, no damages"
+            }
+        ];
+
+        // State Store
+        let fleet = [];
+        let cleaningQueue = [];
+        let ledger = [];
+        let rentalSequence = 1002;
+
+        // Persistence Helpers
+        function loadState() {
+            try {
+                const f = localStorage.getItem('ww_fleet_v2');
+                const q = localStorage.getItem('ww_cleaning_v2');
+                const l = localStorage.getItem('ww_ledger_v2');
+
+                fleet = f ? JSON.parse(f) : JSON.parse(JSON.stringify(INITIAL_FLEET));
+                cleaningQueue = q ? JSON.parse(q) : JSON.parse(JSON.stringify(INITIAL_CLEANING_QUEUE));
+                ledger = l ? JSON.parse(l) : JSON.parse(JSON.stringify(INITIAL_LEDGER));
+            } catch (e) {
+                fleet = JSON.parse(JSON.stringify(INITIAL_FLEET));
+                cleaningQueue = JSON.parse(JSON.stringify(INITIAL_CLEANING_QUEUE));
+                ledger = JSON.parse(JSON.stringify(INITIAL_LEDGER));
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('ww_fleet_v2', JSON.stringify(fleet));
+            localStorage.setItem('ww_cleaning_v2', JSON.stringify(cleaningQueue));
+            localStorage.setItem('ww_ledger_v2', JSON.stringify(ledger));
+        }
+
+        // Operational Metrics Calculation
+        function updateOperationalSummary() {
+            const total = fleet.length;
+            const available = fleet.filter(v => v.status === 'AVAILABLE').length;
+            const rented = fleet.filter(v => v.status === 'RENTED').length;
+            const cleaning = cleaningQueue.length;
+
+            // Check overdue rentals against today's date
+            const today = new Date().toISOString().split('T')[0];
+            let overdueCount = 0;
+            fleet.forEach(v => {
+                if (v.status === 'RENTED' && v.currentRenter && v.currentRenter.expectedReturnDate < today) {
+                    overdueCount++;
+                }
+            });
+
+            // Calculate revenue strictly from ledger
+            let totalRevenue = 0;
+            let totalFines = 0;
+            ledger.forEach(t => {
+                if (t.status === 'COMPLETED') {
+                    totalRevenue += t.totalBill;
+                    totalFines += (t.totalFine || 0);
+                }
+            });
+
+            document.getElementById('sum-total-fleet').innerText = total;
+            document.getElementById('sum-available').innerText = available;
+            document.getElementById('sum-rented').innerText = rented;
+            document.getElementById('sum-cleaning').innerText = cleaning;
+            document.getElementById('sum-overdue').innerText = overdueCount;
+            document.getElementById('sum-revenue').innerText = '₹' + totalRevenue.toLocaleString('en-IN');
+            document.getElementById('sum-fines-sub').innerText = `+ ₹${totalFines.toLocaleString('en-IN')} in late fines`;
+
+            // Navigation Badges
+            document.getElementById('badge-fleet-count').innerText = total;
+            document.getElementById('badge-rented-count').innerText = rented;
+            document.getElementById('badge-cleaning-count').innerText = cleaning;
+        }
+
+        // Navigation Switcher
+        function switchNavTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Hide all views
+            document.getElementById('view-inventory').style.display = 'none';
+            document.getElementById('view-active-rentals').style.display = 'none';
+            document.getElementById('view-cleaning-bay').style.display = 'none';
+            document.getElementById('view-ledger').style.display = 'none';
+
+            if (tab === 'dashboard' || tab === 'inventory-all') {
+                document.getElementById('view-inventory').style.display = 'block';
+                document.getElementById('inventory-view-title').innerText = 'Complete Fleet Inventory';
+                document.getElementById('filter-category').value = 'ALL';
+                filterAndRenderInventory();
+            } else if (tab === 'inventory-two') {
+                document.getElementById('view-inventory').style.display = 'block';
+                document.getElementById('inventory-view-title').innerText = '2-Wheeler Fleet Inventory';
+                document.getElementById('filter-category').value = 'TWO_WHEELER';
+                filterAndRenderInventory();
+            } else if (tab === 'inventory-four') {
+                document.getElementById('view-inventory').style.display = 'block';
+                document.getElementById('inventory-view-title').innerText = '4-Wheeler Fleet Inventory';
+                document.getElementById('filter-category').value = 'FOUR_WHEELER';
+                filterAndRenderInventory();
+            } else if (tab === 'active-rentals') {
+                document.getElementById('view-active-rentals').style.display = 'block';
+                renderActiveRentalsTable();
+            } else if (tab === 'cleaning-bay') {
+                document.getElementById('view-cleaning-bay').style.display = 'block';
+                renderCleaningBayQueue();
+            } else if (tab === 'ledger') {
+                document.getElementById('view-ledger').style.display = 'block';
+                renderLedgerTable();
+            }
+        }
+
+        // Render Inventory Table
+        function filterAndRenderInventory() {
+            const tbody = document.getElementById('inventory-tbody');
+            tbody.innerHTML = '';
+
+            const search = document.getElementById('inventory-search').value.trim().toLowerCase();
+            const catFilter = document.getElementById('filter-category').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            const sortBy = document.getElementById('sort-by').value;
+
+            let filtered = fleet.filter(v => {
+                if (catFilter !== 'ALL' && v.type !== catFilter) return false;
+                if (statusFilter !== 'ALL' && v.status !== statusFilter) return false;
+                if (search) {
+                    const matchId = v.id.toLowerCase().includes(search);
+                    const matchName = (v.brand + " " + v.model).toLowerCase().includes(search);
+                    const matchReg = v.regNumber.toLowerCase().includes(search);
+                    if (!matchId && !matchName && !matchReg) return false;
+                }
+                return true;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if (sortBy === 'RATE_ASC') return a.dailyRate - b.dailyRate;
+                if (sortBy === 'RATE_DESC') return b.dailyRate - a.dailyRate;
+                if (sortBy === 'STATUS') return a.status.localeCompare(b.status);
+                return a.id.localeCompare(b.id);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
                     <tr>
-                        <th>Invoice ID</th>
-                        <th>Vehicle</th>
-                        <th>Category</th>
-                        <th>Customer</th>
-                        <th>Booked</th>
-                        <th>Actual</th>
-                        <th>Base Fare</th>
-                        <th>Late Fine</th>
-                        <th>Total Paid</th>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                <div class="empty-icon">📋</div>
+                                <div class="empty-text">No vehicles matching current criteria</div>
+                                <div class="empty-subtext">Try modifying your search or filter settings</div>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody id="history-tbody"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- ================= MODALS ================= -->
-
-<!-- Modal: Rent Vehicle -->
-<div class="modal-overlay" id="rent-modal">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h2>🔑 Rent a Vehicle</h2>
-            <button class="btn-close" onclick="closeModal('rent-modal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Select Available Vehicle</label>
-                <select class="form-select" id="rent-vehicle-select" onchange="updateRentEstimate()"></select>
-            </div>
-            <div class="form-group">
-                <label>Customer Full Name</label>
-                <input type="text" class="form-input" id="rent-cust-name" placeholder="e.g. John Doe">
-            </div>
-            <div class="form-group">
-                <label>Customer Phone Number</label>
-                <input type="text" class="form-input" id="rent-cust-phone" placeholder="e.g. 9876543210">
-            </div>
-            <div class="form-group">
-                <label>Booking Duration (Days)</label>
-                <input type="number" class="form-input" id="rent-days" value="1" min="1" oninput="updateRentEstimate()">
-            </div>
-            <div class="price-preview-box">
-                <div class="preview-row">
-                    <span>Daily Rate:</span>
-                    <strong id="rent-daily-rate">Rs. 0/day</strong>
-                </div>
-                <div class="preview-row">
-                    <span>Late Fine Policy:</span>
-                    <span id="rent-fine-rate" style="color: #fbbf24;">Rs. 0/day</span>
-                </div>
-                <div class="preview-row preview-total">
-                    <span>Estimated Total Fare:</span>
-                    <span id="rent-est-total">Rs. 0</span>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('rent-modal')">Cancel</button>
-            <button class="btn btn-primary" onclick="submitRent()">Confirm Rental</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal: Return Vehicle -->
-<div class="modal-overlay" id="return-modal">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h2>🔄 Return Rented Vehicle</h2>
-            <button class="btn-close" onclick="closeModal('return-modal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Select Rented Vehicle</label>
-                <select class="form-select" id="return-vehicle-select" onchange="updateReturnCalculation()"></select>
-            </div>
-            <div class="form-group">
-                <label>Actual Days Vehicle Was Kept</label>
-                <input type="number" class="form-input" id="return-actual-days" value="1" min="1" oninput="updateReturnCalculation()">
-            </div>
-            <div class="price-preview-box">
-                <div class="preview-row">
-                    <span>Booked Days:</span>
-                    <strong id="ret-booked-days">0 day(s)</strong>
-                </div>
-                <div class="preview-row">
-                    <span>Base Fare:</span>
-                    <strong id="ret-base-fare">Rs. 0</strong>
-                </div>
-                <div class="preview-row" id="ret-fine-row">
-                    <span>Late Return Fine:</span>
-                    <strong id="ret-fine" style="color: #f87171;">Rs. 0</strong>
-                </div>
-                <div class="preview-row preview-total">
-                    <span>Final Amount Payable:</span>
-                    <span id="ret-total-bill">Rs. 0</span>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('return-modal')">Cancel</button>
-            <button class="btn btn-warning" onclick="submitReturn()">Complete Return & Invoice</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal: Printable Receipt / Invoice -->
-<div class="modal-overlay" id="invoice-modal">
-    <div class="modal-card" style="max-width: 480px;">
-        <div class="modal-header">
-            <h2>🧾 Rental Invoice & Receipt</h2>
-            <button class="btn-close" onclick="closeModal('invoice-modal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="invoice-box" id="invoice-sheet"></div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="closeModal('invoice-modal')">Done</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal: Add New Vehicle -->
-<div class="modal-overlay" id="add-modal">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h2>➕ Add New Vehicle to Fleet</h2>
-            <button class="btn-close" onclick="closeModal('add-modal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Category</label>
-                <select class="form-select" id="add-cat" onchange="toggleAddFields()">
-                    <option value="TWO_WHEELER">2-Wheeler (Motorcycle / Scooter)</option>
-                    <option value="FOUR_WHEELER">4-Wheeler (Car / SUV)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Unique Vehicle ID</label>
-                <input type="text" class="form-input" id="add-id" placeholder="e.g. TW105 or FW205">
-            </div>
-            <div class="form-group">
-                <label>Brand</label>
-                <input type="text" class="form-input" id="add-brand" placeholder="e.g. Royal Enfield or Hyundai">
-            </div>
-            <div class="form-group">
-                <label>Model Name</label>
-                <input type="text" class="form-input" id="add-model" placeholder="e.g. Hunter 350 or Venue">
-            </div>
-            <div class="form-group">
-                <label>Daily Rental Rate (Rs.)</label>
-                <input type="number" class="form-input" id="add-rate" placeholder="e.g. 800">
-            </div>
-            <div class="form-group">
-                <label>Late Fine Rate per Day (Rs.)</label>
-                <input type="number" class="form-input" id="add-fine" placeholder="e.g. 250">
-            </div>
-
-            <!-- 2-Wheeler Fields -->
-            <div id="add-tw-fields">
-                <div class="form-group">
-                    <label>Engine CC</label>
-                    <input type="number" class="form-input" id="add-cc" placeholder="e.g. 350">
-                </div>
-                <div class="form-group" style="margin-top: 6px;">
-                    <label>Transmission</label>
-                    <select class="form-select" id="add-geared">
-                        <option value="1">Geared Motorcycle</option>
-                        <option value="0">Automatic / Scooter</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 4-Wheeler Fields -->
-            <div id="add-fw-fields" style="display: none;">
-                <div class="form-group">
-                    <label>Seating Capacity</label>
-                    <input type="number" class="form-input" id="add-seats" placeholder="e.g. 5">
-                </div>
-                <div class="form-group" style="margin-top: 6px;">
-                    <label>Transmission</label>
-                    <select class="form-select" id="add-trans">
-                        <option value="Manual">Manual</option>
-                        <option value="Automatic">Automatic</option>
-                    </select>
-                </div>
-                <div class="form-group" style="margin-top: 6px;">
-                    <label>Fuel Type</label>
-                    <select class="form-select" id="add-fuel">
-                        <option value="Petrol">Petrol</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Electric">Electric</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('add-modal')">Cancel</button>
-            <button class="btn btn-primary" onclick="submitAddVehicle()">Add to Fleet</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Hybrid State Engine: Works both with local C++ web server AND fully client-side on Vercel deployment!
-    let useLocalBackend = false;
-    let currentFilter = 'all';
-
-    // Default Seed Data matching the C++ Vehicle Rental System
-    const DEFAULT_VEHICLES = [
-        { id: "TW101", brand: "Honda", model: "Activa 6G", type: "TWO_WHEELER", category: "2-Wheeler", specs: "110cc, Automatic / Scooter, Helmet Incl.", dailyRate: 350, lateFine: 100, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
-        { id: "TW102", brand: "Royal Enfield", model: "Classic 350", type: "TWO_WHEELER", category: "2-Wheeler", specs: "350cc, Geared, Helmet Incl.", dailyRate: 900, lateFine: 300, status: "RENTED", customerName: "Rahul Sharma", customerPhone: "9876543210", rentedForDays: 3 },
-        { id: "TW103", brand: "Yamaha", model: "R15 V4", type: "TWO_WHEELER", category: "2-Wheeler", specs: "155cc, Geared, Helmet Incl.", dailyRate: 750, lateFine: 250, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
-        { id: "TW104", brand: "TVS", model: "Jupiter 125", type: "TWO_WHEELER", category: "2-Wheeler", specs: "125cc, Automatic / Scooter, Helmet Incl.", dailyRate: 380, lateFine: 120, status: "IN_CLEANING", customerName: "", customerPhone: "", rentedForDays: 0 },
-        { id: "FW201", brand: "Maruti", model: "Swift Dzire", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "5 Seater, Manual, Petrol", dailyRate: 1600, lateFine: 500, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
-        { id: "FW202", brand: "Hyundai", model: "Creta SX", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "5 Seater, Automatic, Diesel", dailyRate: 2500, lateFine: 800, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
-        { id: "FW203", brand: "Mahindra", model: "Thar 4x4", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "4 Seater, Manual, Diesel", dailyRate: 3200, lateFine: 1000, status: "RENTED", customerName: "Priya Patel", customerPhone: "9123456789", rentedForDays: 2 },
-        { id: "FW204", brand: "Toyota", model: "Innova Crysta", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "7 Seater, Automatic, Diesel", dailyRate: 3800, lateFine: 1200, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 }
-    ];
-
-    const DEFAULT_HISTORY = [
-        { transactionId: "TXN-1000", vehicleId: "FW201", vehicleName: "Maruti Swift Dzire", category: "4-Wheeler", customerName: "Amit Kumar", customerPhone: "9988776655", bookedDays: 2, actualDays: 3, overdueDays: 1, dailyRate: 1600, baseFare: 3200, totalFine: 500, totalBill: 3700 }
-    ];
-
-    let fleetData = [];
-    let cleaningQueue = [];
-    let transactionHistory = [];
-    let nextTxnSeq = 1002;
-
-    function initClientEngine() {
-        const storedFleet = localStorage.getItem('vrs_fleet');
-        const storedHistory = localStorage.getItem('vrs_history');
-        const storedQueue = localStorage.getItem('vrs_queue');
-
-        fleetData = storedFleet ? JSON.parse(storedFleet) : JSON.parse(JSON.stringify(DEFAULT_VEHICLES));
-        transactionHistory = storedHistory ? JSON.parse(storedHistory) : JSON.parse(JSON.stringify(DEFAULT_HISTORY));
-        
-        if (storedQueue) {
-            cleaningQueue = JSON.parse(storedQueue);
-        } else {
-            cleaningQueue = [{ id: "TW104", name: "TVS Jupiter 125", category: "2-Wheeler", specs: "125cc, Automatic / Scooter, Helmet Incl." }];
-        }
-    }
-
-    function saveClientState() {
-        if (!useLocalBackend) {
-            localStorage.setItem('vrs_fleet', JSON.stringify(fleetData));
-            localStorage.setItem('vrs_history', JSON.stringify(transactionHistory));
-            localStorage.setItem('vrs_queue', JSON.stringify(cleaningQueue));
-        }
-    }
-
-    async function checkBackend() {
-        try {
-            const res = await fetch('/api/stats', { signal: AbortSignal.timeout(1500) });
-            if (res.ok) {
-                useLocalBackend = true;
-                document.getElementById('env-badge-text').innerText = 'Localhost:8080 C++ Active';
-                document.getElementById('mode-badge').innerText = '⚡ C++ Native Server';
-            } else {
-                throw new Error('Not local backend');
-            }
-        } catch (e) {
-            useLocalBackend = false;
-            document.getElementById('env-badge-text').innerText = 'Cloud Active (Vercel)';
-            document.getElementById('mode-badge').innerText = '🚀 Client Engine Mode';
-            initClientEngine();
-        }
-    }
-
-    async function loadData() {
-        if (useLocalBackend) {
-            try {
-                const [vRes, sRes, qRes, hRes] = await Promise.all([
-                    fetch('/api/vehicles'),
-                    fetch('/api/stats'),
-                    fetch('/api/cleaning-bay'),
-                    fetch('/api/history')
-                ]);
-                fleetData = await vRes.json();
-                const stats = await sRes.json();
-                const queue = await qRes.json();
-                const history = await hRes.json();
-
-                renderStats(stats);
-                renderFleetCards();
-                renderCleaningBay(queue);
-                renderHistoryTable(history);
+                `;
                 return;
-            } catch (err) {
-                console.warn('Backend disconnected, falling back to client mode');
-                useLocalBackend = false;
-                initClientEngine();
-            }
-        }
-
-        // Client-side computation
-        const total = fleetData.length;
-        const available = fleetData.filter(v => v.status === 'AVAILABLE').length;
-        const rented = fleetData.filter(v => v.status === 'RENTED').length;
-        const cleaning = cleaningQueue.length;
-        const revenue = transactionHistory.reduce((acc, t) => acc + t.totalBill, 0);
-
-        renderStats({ total, available, rented, cleaning, revenue });
-        renderFleetCards();
-        renderCleaningBay(cleaningQueue);
-        renderHistoryTable(transactionHistory);
-    }
-
-    function renderStats(stats) {
-        document.getElementById('stat-total').innerText = stats.total;
-        document.getElementById('stat-available').innerText = stats.available;
-        document.getElementById('stat-rented').innerText = stats.rented;
-        document.getElementById('stat-cleaning').innerText = stats.cleaning;
-        document.getElementById('tab-cleaning-count').innerText = stats.cleaning;
-        document.getElementById('stat-revenue').innerText = 'Rs. ' + stats.revenue.toLocaleString();
-    }
-
-    function renderFleetCards() {
-        const grid = document.getElementById('vehicle-grid');
-        grid.innerHTML = '';
-
-        const filtered = fleetData.filter(v => {
-            if (currentFilter === 'two') return v.type === 'TWO_WHEELER';
-            if (currentFilter === 'four') return v.type === 'FOUR_WHEELER';
-            return true;
-        });
-
-        if (filtered.length === 0) {
-            grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No vehicles found for this category.</div>';
-            return;
-        }
-
-        filtered.forEach(v => {
-            const card = document.createElement('div');
-            card.className = 'v-card';
-
-            const statusClass = v.status === 'AVAILABLE' ? 'status-AVAILABLE' :
-                               v.status === 'RENTED' ? 'status-RENTED' : 'status-CLEANING';
-
-            let actionBtn = '';
-            if (v.status === 'AVAILABLE') {
-                actionBtn = `<button class="btn btn-primary" onclick="quickRent('${v.id}')">Rent Now</button>`;
-            } else if (v.status === 'RENTED') {
-                actionBtn = `<button class="btn btn-warning" onclick="quickReturn('${v.id}')">Process Return</button>`;
-            } else {
-                actionBtn = `<button class="btn btn-outline" onclick="cleanNextVehicle()">In Cleaning Bay</button>`;
             }
 
-            let rentalHtml = '';
-            if (v.status === 'RENTED') {
-                rentalHtml = `
-                    <div class="rental-info-box">
-                        <strong>Rented to:</strong> ${v.customerName}<br>
-                        <strong>Duration:</strong> ${v.rentedForDays} day(s) (${v.customerPhone || 'N/A'})
-                    </div>
-                `;
-            } else if (v.status === 'IN_CLEANING') {
-                rentalHtml = `
-                    <div class="rental-info-box" style="border-left-color: var(--blue); background: rgba(6,182,212,0.1);">
-                        <strong>Status:</strong> Awaiting wash in FIFO queue
-                    </div>
-                `;
-            }
+            filtered.forEach(v => {
+                const tr = document.createElement('tr');
 
-            card.innerHTML = `
-                <div>
-                    <div class="v-header">
+                // Status styling
+                let statusBadge = '';
+                if (v.status === 'AVAILABLE') {
+                    statusBadge = `<span class="status-pill status-available"><span class="status-dot"></span>Available</span>`;
+                } else if (v.status === 'RENTED') {
+                    statusBadge = `<span class="status-pill status-rented"><span class="status-dot"></span>Rented</span>`;
+                } else if (v.status === 'CLEANING') {
+                    statusBadge = `<span class="status-pill status-cleaning"><span class="status-dot"></span>Cleaning</span>`;
+                } else if (v.status === 'MAINTENANCE') {
+                    statusBadge = `<span class="status-pill status-maintenance"><span class="status-dot"></span>Maintenance</span>`;
+                }
+
+                // Current Renter info
+                let renterInfo = '<span style="color: var(--text-muted);">&mdash;</span>';
+                if (v.status === 'RENTED' && v.currentRenter) {
+                    renterInfo = `
                         <div>
-                            <span class="v-id">${v.id}</span>
-                            <div class="v-title">${v.brand} ${v.model}</div>
-                            <span class="v-cat-badge">${v.category}</span>
+                            <strong>${v.currentRenter.name}</strong>
+                            <div style="font-size: 11px; color: var(--text-muted);">${v.currentRenter.bookedDays}d (Until ${v.currentRenter.expectedReturnDate})</div>
                         </div>
-                        <span class="badge-status ${statusClass}">${v.status.replace('_', ' ')}</span>
-                    </div>
-
-                    <div class="v-specs">⚙ ${v.specs}</div>
-                    ${rentalHtml}
-
-                    <div class="v-rates">
-                        <div class="rate-item">
-                            <span>Daily Rate</span>
-                            <strong>Rs. ${v.dailyRate}</strong>
-                        </div>
-                        <div class="rate-item">
-                            <span>Late Fine / Day</span>
-                            <strong style="color: #fbbf24;">Rs. ${v.lateFine}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="v-actions">
-                    ${actionBtn}
-                </div>
-            `;
-
-            grid.appendChild(card);
-        });
-    }
-
-    function renderCleaningBay(queue) {
-        const container = document.getElementById('queue-list');
-        container.innerHTML = '';
-
-        if (!queue || queue.length === 0) {
-            container.innerHTML = '<div class="empty-state">Cleaning Bay is currently empty. All vehicles are sanitized & ready!</div>';
-            return;
-        }
-
-        queue.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'queue-item';
-            div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 14px;">
-                    <span class="queue-pos">#${idx + 1}</span>
-                    <div>
-                        <strong>${item.id} - ${item.name}</strong>
-                        <div style="color: var(--text-muted); font-size: 0.85rem;">${item.category} | ${item.specs}</div>
-                    </div>
-                </div>
-                <span class="badge-status status-CLEANING">Queued</span>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    function renderHistoryTable(history) {
-        const tbody = document.getElementById('history-tbody');
-        tbody.innerHTML = '';
-
-        if (!history || history.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No rental records yet.</td></tr>';
-            return;
-        }
-
-        history.forEach(h => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${h.transactionId}</strong></td>
-                <td>${h.vehicleId} (${h.vehicleName})</td>
-                <td>${h.category}</td>
-                <td>${h.customerName}</td>
-                <td>${h.bookedDays}d</td>
-                <td>${h.actualDays}d</td>
-                <td>Rs. ${h.baseFare}</td>
-                <td style="color: ${h.totalFine > 0 ? '#f87171' : 'inherit'}">Rs. ${h.totalFine}</td>
-                <td><strong>Rs. ${h.totalBill}</strong></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function switchTab(tab) {
-        currentFilter = tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-
-        document.getElementById('fleet-view').style.display = (tab === 'cleaning' || tab === 'history') ? 'none' : 'block';
-        document.getElementById('cleaning-view').style.display = (tab === 'cleaning') ? 'block' : 'none';
-        document.getElementById('history-view').style.display = (tab === 'history') ? 'block' : 'none';
-
-        if (tab !== 'cleaning' && tab !== 'history') {
-            renderFleetCards();
-        }
-    }
-
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-    function openRentModal(preselectId) {
-        const select = document.getElementById('rent-vehicle-select');
-        select.innerHTML = '';
-        const avail = fleetData.filter(v => v.status === 'AVAILABLE');
-
-        if (avail.length === 0) {
-            alert('No vehicles currently available for rent!');
-            return;
-        }
-
-        avail.forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v.id;
-            opt.innerText = `${v.id} - ${v.brand} ${v.model} (Rs. ${v.dailyRate}/day)`;
-            if (preselectId && v.id === preselectId) opt.selected = true;
-            select.appendChild(opt);
-        });
-
-        updateRentEstimate();
-        openModal('rent-modal');
-    }
-
-    function quickRent(id) { openRentModal(id); }
-
-    function updateRentEstimate() {
-        const selId = document.getElementById('rent-vehicle-select').value;
-        const days = parseInt(document.getElementById('rent-days').value) || 1;
-        const v = fleetData.find(x => x.id === selId);
-
-        if (v) {
-            document.getElementById('rent-daily-rate').innerText = `Rs. ${v.dailyRate}/day`;
-            document.getElementById('rent-fine-rate').innerText = `Rs. ${v.lateFine}/day`;
-            document.getElementById('rent-est-total').innerText = `Rs. ${(v.dailyRate * days).toFixed(2)}`;
-        }
-    }
-
-    async function submitRent() {
-        const vehicleId = document.getElementById('rent-vehicle-select').value;
-        const customerName = document.getElementById('rent-cust-name').value.trim();
-        const customerPhone = document.getElementById('rent-cust-phone').value.trim();
-        const days = parseInt(document.getElementById('rent-days').value) || 1;
-
-        if (!customerName) {
-            alert('Please enter customer name');
-            return;
-        }
-
-        if (useLocalBackend) {
-            try {
-                const res = await fetch('/api/rent', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ vehicleId, customerName, customerPhone, days })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    closeModal('rent-modal');
-                    resetRentForm();
-                    loadData();
-                } else {
-                    alert('Error: ' + data.message);
+                    `;
                 }
+
+                // Action buttons based on status
+                let actionBtn = '';
+                if (v.status === 'AVAILABLE') {
+                    actionBtn = `
+                        <button class="btn btn-primary btn-sm" onclick="openRentModal('${v.id}')">
+                            Rent
+                        </button>
+                    `;
+                } else if (v.status === 'RENTED') {
+                    actionBtn = `
+                        <button class="btn btn-secondary btn-sm" style="color: var(--warning-text); border-color: var(--warning-border);" onclick="openReturnModal('${v.id}')">
+                            Return
+                        </button>
+                    `;
+                } else if (v.status === 'CLEANING' || v.status === 'MAINTENANCE') {
+                    actionBtn = `
+                        <button class="btn btn-secondary btn-sm" onclick="switchNavTab('cleaning-bay')">
+                            View Bay
+                        </button>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td><span class="font-mono" style="font-weight: 700; color: var(--action-primary-hover);">${v.id}</span></td>
+                    <td>
+                        <strong style="color: var(--text-primary);">${v.brand} ${v.model}</strong>
+                        <div style="font-size: 11px; color: var(--text-secondary);">${v.specs.substring(0, 32)}...</div>
+                    </td>
+                    <td><span style="font-size: 12px; color: var(--text-secondary);">${v.category}</span></td>
+                    <td><span class="plate-badge font-mono">${v.regNumber}</span></td>
+                    <td><span class="font-mono">₹${v.dailyRate.toLocaleString('en-IN')}/d</span></td>
+                    <td><span class="font-mono" style="color: var(--warning-text);">₹${v.lateFine.toLocaleString('en-IN')}/d</span></td>
+                    <td>${statusBadge}</td>
+                    <td>${renterInfo}</td>
+                    <td style="text-align: right;">
+                        <div class="table-actions" style="justify-content: flex-end;">
+                            ${actionBtn}
+                            <button class="btn btn-secondary btn-sm" onclick="viewVehicleDetails('${v.id}')" title="Technical Details">
+                                Details
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render Active Rentals Table
+        function renderActiveRentalsTable() {
+            const tbody = document.getElementById('active-rentals-tbody');
+            tbody.innerHTML = '';
+
+            const rented = fleet.filter(v => v.status === 'RENTED' && v.currentRenter);
+
+            if (rented.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10">
+                            <div class="empty-state">
+                                <div class="empty-icon">🔑</div>
+                                <div class="empty-text">No active rentals right now</div>
+                                <div class="empty-subtext">All fleet vehicles are either available in stock or in the service bay.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
                 return;
-            } catch (e) {}
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+
+            rented.forEach(v => {
+                const r = v.currentRenter;
+                const isOverdue = r.expectedReturnDate < today;
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td><span class="font-mono" style="font-weight: 700;">${v.id}</span></td>
+                    <td>
+                        <strong>${v.brand} ${v.model}</strong>
+                        <div class="plate-badge font-mono" style="margin-top: 2px;">${v.regNumber}</div>
+                    </td>
+                    <td><strong>${r.name}</strong></td>
+                    <td><span class="font-mono">${r.phone}</span></td>
+                    <td><span class="font-mono" style="font-size: 11.5px;">${r.startDate} &rarr; ${r.expectedReturnDate}</span></td>
+                    <td><span class="font-mono">${r.bookedDays} days</span></td>
+                    <td><span class="font-mono">₹${v.dailyRate}/d</span></td>
+                    <td><span class="font-mono">₹${r.deposit.toLocaleString('en-IN')}</span></td>
+                    <td>
+                        ${isOverdue 
+                            ? '<span class="status-pill status-overdue"><span class="status-dot"></span>Overdue</span>' 
+                            : '<span class="status-pill status-rented"><span class="status-dot"></span>Active</span>'
+                        }
+                    </td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-primary btn-sm" onclick="openReturnModal('${v.id}')">
+                            Process Return
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // Client engine fallback
-        const v = fleetData.find(x => x.id === vehicleId);
-        if (v && v.status === 'AVAILABLE') {
-            v.status = 'RENTED';
-            v.customerName = customerName;
-            v.customerPhone = customerPhone;
-            v.rentedForDays = days;
-            saveClientState();
-            closeModal('rent-modal');
-            resetRentForm();
-            loadData();
+        // Render Cleaning Bay (FIFO Queue)
+        function renderCleaningBayQueue() {
+            const container = document.getElementById('cleaning-bay-list');
+            container.innerHTML = '';
+
+            if (cleaningQueue.length === 0) {
+                container.innerHTML = `
+                    <div class="table-card">
+                        <div class="empty-state">
+                            <div class="empty-icon">🧼</div>
+                            <div class="empty-text">Cleaning & Service Bay is currently clear</div>
+                            <div class="empty-subtext">No vehicles pending wash, inspection, or repairs.</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            cleaningQueue.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'queue-item-card';
+
+                const typeBadge = item.serviceType === 'MAINTENANCE' 
+                    ? '<span class="status-pill status-maintenance"><span class="status-dot"></span>Maintenance Required</span>'
+                    : '<span class="status-pill status-cleaning"><span class="status-dot"></span>Cleaning & Wash</span>';
+
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <span class="queue-pos-badge font-mono">Position #${index + 1}</span>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <strong style="font-size: 14px; color: var(--text-primary);">${item.vehicleId} &mdash; ${item.vehicleName}</strong>
+                                <span class="plate-badge font-mono">${item.regNumber}</span>
+                                ${typeBadge}
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
+                                Previous Renter: <strong>${item.previousRenter || 'Staff Entry'}</strong> &bull; Queued on: <span class="font-mono">${item.entryDate}</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                                Work Notes: ${item.notes}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-success btn-sm" onclick="completeSingleService(${index})">
+                            Mark Complete & Set Available
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
         }
-    }
 
-    function resetRentForm() {
-        document.getElementById('rent-cust-name').value = '';
-        document.getElementById('rent-cust-phone').value = '';
-    }
+        // Service Queue Operations (FIFO Dequeue)
+        function completeSingleService(queueIndex) {
+            if (queueIndex < 0 || queueIndex >= cleaningQueue.length) return;
+            const item = cleaningQueue[queueIndex];
 
-    function openReturnModal(preselectId) {
-        const select = document.getElementById('return-vehicle-select');
-        select.innerHTML = '';
-        const rented = fleetData.filter(v => v.status === 'RENTED');
+            if (confirm(`Confirm inspection complete for ${item.vehicleId} (${item.vehicleName})?\nThis vehicle will be returned to the Available fleet.`)) {
+                // Remove from queue
+                cleaningQueue.splice(queueIndex, 1);
 
-        if (rented.length === 0) {
-            alert('No vehicles currently rented out!');
-            return;
+                // Update vehicle in fleet
+                const v = fleet.find(x => x.id === item.vehicleId);
+                if (v) v.status = 'AVAILABLE';
+
+                saveState();
+                updateOperationalSummary();
+                renderCleaningBayQueue();
+                filterAndRenderInventory();
+            }
         }
 
-        rented.forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v.id;
-            opt.innerText = `${v.id} - ${v.brand} ${v.model} (${v.customerName})`;
-            if (preselectId && v.id === preselectId) opt.selected = true;
-            select.appendChild(opt);
-        });
+        function processServiceQueue(mode) {
+            if (cleaningQueue.length === 0) {
+                alert('The service bay queue is already empty.');
+                return;
+            }
 
-        updateReturnCalculation();
-        openModal('return-modal');
-    }
-
-    function quickReturn(id) { openReturnModal(id); }
-
-    function updateReturnCalculation() {
-        const selId = document.getElementById('return-vehicle-select').value;
-        const actualDays = parseInt(document.getElementById('return-actual-days').value) || 1;
-        const v = fleetData.find(x => x.id === selId);
-
-        if (v) {
-            const bookedDays = v.rentedForDays || 1;
-            const overdue = Math.max(0, actualDays - bookedDays);
-            const baseFare = bookedDays * v.dailyRate;
-            const fine = overdue * v.lateFine;
-            const total = baseFare + fine;
-
-            document.getElementById('ret-booked-days').innerText = `${bookedDays} day(s)`;
-            document.getElementById('ret-base-fare').innerText = `Rs. ${baseFare.toFixed(2)}`;
-            document.getElementById('ret-fine').innerText = overdue > 0 ? `Rs. ${fine.toFixed(2)} (${overdue}d overdue)` : 'Rs. 0.00';
-            document.getElementById('ret-total-bill').innerText = `Rs. ${total.toFixed(2)}`;
-        }
-    }
-
-    async function submitReturn() {
-        const vehicleId = document.getElementById('return-vehicle-select').value;
-        const actualDays = parseInt(document.getElementById('return-actual-days').value) || 1;
-
-        if (useLocalBackend) {
-            try {
-                const res = await fetch('/api/return', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ vehicleId, actualDays })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    closeModal('return-modal');
-                    showInvoice(data.invoice);
-                    loadData();
-                    return;
-                } else {
-                    alert('Error: ' + data.message);
+            if (mode === 'NEXT') {
+                // FIFO Front pop
+                const next = cleaningQueue.shift();
+                const v = fleet.find(x => x.id === next.vehicleId);
+                if (v) v.status = 'AVAILABLE';
+                alert(`Vehicle ${next.id || next.vehicleId} (${next.vehicleName}) serviced and restored to AVAILABLE.`);
+            } else if (mode === 'ALL') {
+                if (confirm(`Mark all ${cleaningQueue.length} vehicle(s) in the bay as inspected and ready for rent?`)) {
+                    while (cleaningQueue.length > 0) {
+                        const item = cleaningQueue.shift();
+                        const v = fleet.find(x => x.id === item.vehicleId);
+                        if (v) v.status = 'AVAILABLE';
+                    }
                 }
-            } catch (e) {}
+            }
+
+            saveState();
+            updateOperationalSummary();
+            renderCleaningBayQueue();
+            filterAndRenderInventory();
         }
 
-        // Client engine fallback
-        const v = fleetData.find(x => x.id === vehicleId);
-        if (v && v.status === 'RENTED') {
-            const bookedDays = v.rentedForDays || 1;
-            const overdueDays = Math.max(0, actualDays - bookedDays);
-            const baseFare = bookedDays * v.dailyRate;
-            const fine = overdueDays * v.lateFine;
-            const totalBill = baseFare + fine;
+        // Render Ledger
+        function renderLedgerTable() {
+            const tbody = document.getElementById('ledger-tbody');
+            tbody.innerHTML = '';
 
-            const invoice = {
-                transactionId: "TXN-" + (nextTxnSeq++),
+            const search = document.getElementById('ledger-search') ? document.getElementById('ledger-search').value.trim().toLowerCase() : '';
+            const statusFilter = document.getElementById('ledger-filter-status') ? document.getElementById('ledger-filter-status').value : 'ALL';
+
+            let filtered = ledger.filter(t => {
+                if (statusFilter === 'OVERDUE' && (!t.totalFine || t.totalFine === 0)) return false;
+                if (search) {
+                    const mId = t.rentalId.toLowerCase().includes(search);
+                    const mCust = t.customerName.toLowerCase().includes(search);
+                    const mVeh = t.vehicleName.toLowerCase().includes(search);
+                    if (!mId && !mCust && !mVeh) return false;
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11">
+                            <div class="empty-state">
+                                <div class="empty-icon">📜</div>
+                                <div class="empty-text">No ledger records found</div>
+                                <div class="empty-subtext">Completed rental transactions will appear here.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="font-mono" style="font-weight: 700;">${t.rentalId}</span></td>
+                    <td>
+                        <strong>${t.customerName}</strong>
+                        <div style="font-size: 11px; color: var(--text-muted);">${t.customerPhone}</div>
+                    </td>
+                    <td>${t.vehicleName}</td>
+                    <td><span class="plate-badge font-mono">${t.regNumber}</span></td>
+                    <td>
+                        <span class="font-mono">${t.bookedDays}d / ${t.actualDays}d</span>
+                        ${t.overdueDays > 0 ? `<span style="color: var(--danger-text); font-size: 11px;"> (+${t.overdueDays}d)</span>` : ''}
+                    </td>
+                    <td><span class="font-mono">₹${t.baseFare.toLocaleString('en-IN')}</span></td>
+                    <td><span class="font-mono" style="color: ${t.totalFine > 0 ? 'var(--danger-text)' : 'inherit'}; font-weight: ${t.totalFine > 0 ? '700' : '400'};">₹${t.totalFine.toLocaleString('en-IN')}</span></td>
+                    <td><span class="font-mono">₹${t.deposit.toLocaleString('en-IN')}</span></td>
+                    <td><strong class="font-mono">₹${t.totalBill.toLocaleString('en-IN')}</strong></td>
+                    <td><span class="status-pill status-available">Completed</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-secondary btn-sm" onclick="showVoucherInvoice('${t.rentalId}')">
+                            Voucher
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ================= MODAL OPERATIONS =================
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // 1. Rent Workflow
+        function openRentModal(preselectId) {
+            const select = document.getElementById('rent-vehicle-select');
+            select.innerHTML = '';
+
+            const availableVehicles = fleet.filter(v => v.status === 'AVAILABLE');
+            if (availableVehicles.length === 0) {
+                alert('No vehicles currently have an "Available" status to rent.');
+                return;
+            }
+
+            availableVehicles.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.innerText = `${v.id} — ${v.brand} ${v.model} (${v.regNumber}) [₹${v.dailyRate}/day]`;
+                if (preselectId && v.id === preselectId) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            // Set default dates
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 2);
+
+            document.getElementById('rent-start-date').value = today.toISOString().split('T')[0];
+            document.getElementById('rent-return-date').value = tomorrow.toISOString().split('T')[0];
+
+            onRentVehicleSelectChange();
+            openModal('modal-rent');
+        }
+
+        function onRentVehicleSelectChange() {
+            const vid = document.getElementById('rent-vehicle-select').value;
+            const v = fleet.find(x => x.id === vid);
+            if (v) {
+                document.getElementById('rent-display-rate').value = `₹${v.dailyRate}/day (Fine: ₹${v.lateFine}/day)`;
+                // Set reasonable default deposit based on category
+                document.getElementById('rent-deposit').value = (v.type === 'TWO_WHEELER') ? 1500 : 4000;
+                recalculateRentCost();
+            }
+        }
+
+        function recalculateRentCost() {
+            const vid = document.getElementById('rent-vehicle-select').value;
+            const v = fleet.find(x => x.id === vid);
+            if (!v) return;
+
+            const startStr = document.getElementById('rent-start-date').value;
+            const returnStr = document.getElementById('rent-return-date').value;
+            const deposit = parseFloat(document.getElementById('rent-deposit').value) || 0;
+
+            let days = 1;
+            if (startStr && returnStr) {
+                const s = new Date(startStr);
+                const r = new Date(returnStr);
+                const diffTime = r - s;
+                days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            }
+
+            const baseFare = days * v.dailyRate;
+            const totalAdvance = baseFare + deposit;
+
+            document.getElementById('rent-calc-days').innerText = `${days} day(s)`;
+            document.getElementById('rent-calc-base').innerText = `₹${baseFare.toLocaleString('en-IN')}.00`;
+            document.getElementById('rent-calc-deposit').innerText = `₹${deposit.toLocaleString('en-IN')}.00`;
+            document.getElementById('rent-calc-total').innerText = `₹${totalAdvance.toLocaleString('en-IN')}.00`;
+        }
+
+        function submitRentalBooking() {
+            const vid = document.getElementById('rent-vehicle-select').value;
+            const name = document.getElementById('rent-customer-name').value.trim();
+            const phone = document.getElementById('rent-customer-phone').value.trim();
+            const start = document.getElementById('rent-start-date').value;
+            const expectedReturn = document.getElementById('rent-return-date').value;
+            const deposit = parseFloat(document.getElementById('rent-deposit').value) || 0;
+
+            if (!name) { alert('Please enter Customer Full Name'); return; }
+            if (!phone || phone.length < 10) { alert('Please enter a valid 10-digit Contact Phone Number'); return; }
+            if (!expectedReturn || expectedReturn < start) { alert('Expected Return Date must be equal to or after Start Date'); return; }
+
+            const v = fleet.find(x => x.id === vid);
+            if (!v || v.status !== 'AVAILABLE') {
+                alert('Error: Selected vehicle is no longer available.');
+                return;
+            }
+
+            const s = new Date(start);
+            const r = new Date(expectedReturn);
+            const days = Math.max(1, Math.ceil((r - s) / (1000 * 60 * 60 * 24)));
+
+            // Update Vehicle Status
+            v.status = 'RENTED';
+            v.currentRenter = {
+                name: name,
+                phone: phone,
+                startDate: start,
+                expectedReturnDate: expectedReturn,
+                bookedDays: days,
+                deposit: deposit
+            };
+
+            saveState();
+            closeModal('modal-rent');
+            updateOperationalSummary();
+            filterAndRenderInventory();
+            alert(`Vehicle ${v.id} (${v.brand} ${v.model}) successfully dispatched to ${name}.`);
+        }
+
+        // 2. Return Workflow
+        function openReturnModal(preselectId) {
+            const select = document.getElementById('return-vehicle-select');
+            select.innerHTML = '';
+
+            const rented = fleet.filter(v => v.status === 'RENTED');
+            if (rented.length === 0) {
+                alert('No vehicles are currently rented out.');
+                return;
+            }
+
+            rented.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.innerText = `${v.id} — ${v.brand} ${v.model} (${v.currentRenter.name}) [Booked until ${v.currentRenter.expectedReturnDate}]`;
+                if (preselectId && v.id === preselectId) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            document.getElementById('return-actual-date').value = new Date().toISOString().split('T')[0];
+            onReturnVehicleSelectChange();
+            openModal('modal-return');
+        }
+
+        function onReturnVehicleSelectChange() {
+            const vid = document.getElementById('return-vehicle-select').value;
+            const v = fleet.find(x => x.id === vid);
+            if (v && v.currentRenter) {
+                document.getElementById('return-display-customer').value = `${v.currentRenter.name} (${v.currentRenter.phone})`;
+                document.getElementById('return-display-dates').value = `${v.currentRenter.startDate} to ${v.currentRenter.expectedReturnDate} (${v.currentRenter.bookedDays} days)`;
+                recalculateReturnSettlement();
+            }
+        }
+
+        function recalculateReturnSettlement() {
+            const vid = document.getElementById('return-vehicle-select').value;
+            const v = fleet.find(x => x.id === vid);
+            if (!v || !v.currentRenter) return;
+
+            const r = v.currentRenter;
+            const actualDateStr = document.getElementById('return-actual-date').value;
+            const extra = parseFloat(document.getElementById('return-extra-charges').value) || 0;
+
+            const start = new Date(r.startDate);
+            const actual = new Date(actualDateStr);
+
+            let actualDays = Math.max(1, Math.ceil((actual - start) / (1000 * 60 * 60 * 24)));
+            let bookedDays = r.bookedDays;
+
+            // Strict late fine formula: Overdue days = max(0, actual_days - booked_days)
+            let overdueDays = Math.max(0, actualDays - bookedDays);
+            let lateFine = overdueDays * v.lateFine;
+            let baseFare = bookedDays * v.dailyRate;
+            let totalBill = baseFare + lateFine + extra;
+
+            document.getElementById('return-calc-booked-days').innerText = `${bookedDays} day(s)`;
+            document.getElementById('return-calc-actual-days').innerText = `${actualDays} day(s)`;
+            document.getElementById('return-calc-overdue-days').innerText = overdueDays > 0 ? `${overdueDays} day(s) OVERDUE` : '0 days (On time)';
+            document.getElementById('return-calc-base').innerText = `₹${baseFare.toLocaleString('en-IN')}.00`;
+            document.getElementById('return-calc-fine').innerText = `₹${lateFine.toLocaleString('en-IN')}.00 (@ ₹${v.lateFine}/d)`;
+            document.getElementById('return-calc-deposit').innerText = `- ₹${r.deposit.toLocaleString('en-IN')}.00`;
+
+            const finalPayable = totalBill - r.deposit;
+            document.getElementById('return-calc-total').innerText = (finalPayable >= 0)
+                ? `₹${finalPayable.toLocaleString('en-IN')}.00 (Due from customer)`
+                : `₹${Math.abs(finalPayable).toLocaleString('en-IN')}.00 (Refund to customer)`;
+        }
+
+        function submitVehicleReturn() {
+            const vid = document.getElementById('return-vehicle-select').value;
+            const actualDateStr = document.getElementById('return-actual-date').value;
+            const extra = parseFloat(document.getElementById('return-extra-charges').value) || 0;
+            const nextStatus = document.getElementById('return-next-status').value;
+
+            const v = fleet.find(x => x.id === vid);
+            if (!v || v.status !== 'RENTED' || !v.currentRenter) {
+                alert('Error: Invalid vehicle return selection.');
+                return;
+            }
+
+            const r = v.currentRenter;
+            const start = new Date(r.startDate);
+            const actual = new Date(actualDateStr);
+            const actualDays = Math.max(1, Math.ceil((actual - start) / (1000 * 60 * 60 * 24)));
+            const bookedDays = r.bookedDays;
+            const overdueDays = Math.max(0, actualDays - bookedDays);
+            const lateFine = overdueDays * v.lateFine;
+            const baseFare = bookedDays * v.dailyRate;
+            const totalBill = baseFare + lateFine + extra;
+
+            // Generate Ledger Record
+            const invoiceRecord = {
+                rentalId: "RNT-" + (rentalSequence++),
                 vehicleId: v.id,
-                vehicleName: v.brand + " " + v.model,
+                vehicleName: `${v.brand} ${v.model}`,
+                regNumber: v.regNumber,
                 category: v.category,
-                customerName: v.customerName,
-                customerPhone: v.customerPhone,
+                customerName: r.name,
+                customerPhone: r.phone,
+                startDate: r.startDate,
+                expectedReturnDate: r.expectedReturnDate,
+                actualReturnDate: actualDateStr,
                 bookedDays: bookedDays,
                 actualDays: actualDays,
                 overdueDays: overdueDays,
                 dailyRate: v.dailyRate,
                 baseFare: baseFare,
-                totalFine: fine,
-                totalBill: totalBill
+                lateFineRate: v.lateFine,
+                totalFine: lateFine,
+                deposit: r.deposit,
+                additionalCharges: extra,
+                totalBill: totalBill,
+                status: "COMPLETED"
             };
 
-            transactionHistory.unshift(invoice);
+            ledger.unshift(invoiceRecord);
 
-            // Move to Cleaning (FIFO Queue)
-            v.status = 'IN_CLEANING';
-            v.customerName = "";
-            v.customerPhone = "";
-            v.rentedForDays = 0;
+            // Update Vehicle Status as requested by the employee
+            v.status = nextStatus;
+            v.currentRenter = null;
 
-            cleaningQueue.push({
-                id: v.id,
-                name: v.brand + " " + v.model,
-                category: v.category,
-                specs: v.specs
-            });
-
-            saveClientState();
-            closeModal('return-modal');
-            showInvoice(invoice);
-            loadData();
-        }
-    }
-
-    function showInvoice(inv) {
-        const box = document.getElementById('invoice-sheet');
-        box.innerHTML = `
-            <div class="invoice-title">WHEELS & WAYS RENTAL INVOICE</div>
-            <div class="inv-row"><span>Invoice ID:</span><strong>${inv.transactionId}</strong></div>
-            <div class="inv-row"><span>Customer:</span><strong>${inv.customerName}</strong></div>
-            <div class="inv-row"><span>Phone:</span><strong>${inv.customerPhone || 'N/A'}</strong></div>
-            <div class="inv-row"><span>Vehicle:</span><strong>${inv.vehicleId} (${inv.vehicleName})</strong></div>
-            <div class="inv-row"><span>Category:</span><strong>${inv.category}</strong></div>
-            <hr style="margin: 10px 0; border: none; border-top: 1px dashed #000;">
-            <div class="inv-row"><span>Booked Duration:</span><strong>${inv.bookedDays} days @ Rs. ${inv.dailyRate}/day</strong></div>
-            <div class="inv-row"><span>Actual Duration:</span><strong>${inv.actualDays} days</strong></div>
-            <div class="inv-row"><span>Base Fare:</span><strong>Rs. ${inv.baseFare.toFixed(2)}</strong></div>
-            <div class="inv-row"><span>Overdue Days:</span><strong style="color: red;">${inv.overdueDays} day(s)</strong></div>
-            <div class="inv-row"><span>Late Return Fine:</span><strong style="color: red;">Rs. ${inv.totalFine.toFixed(2)}</strong></div>
-            <div class="inv-row inv-total"><span>TOTAL AMOUNT:</span><span>Rs. ${inv.totalBill.toFixed(2)}</span></div>
-            <p style="text-align: center; margin-top: 14px; font-size: 0.8rem; color: #555;">
-                Vehicle automatically routed to Cleaning Bay (FIFO Queue).
-            </p>
-        `;
-        openModal('invoice-modal');
-    }
-
-    async function cleanNextVehicle() {
-        if (useLocalBackend) {
-            try {
-                const res = await fetch('/api/clean-next', { method: 'POST' });
-                const data = await res.json();
-                alert(data.message);
-                loadData();
-                return;
-            } catch (e) {}
-        }
-
-        // Client fallback (FIFO Queue Pop)
-        if (cleaningQueue.length > 0) {
-            const next = cleaningQueue.shift();
-            const v = fleetData.find(x => x.id === next.id);
-            if (v) v.status = 'AVAILABLE';
-            saveClientState();
-            alert(`Vehicle ${next.id} (${next.name}) washed, inspected, and restored to AVAILABLE!`);
-            loadData();
-        } else {
-            alert('Cleaning bay queue is empty!');
-        }
-    }
-
-    async function cleanAllVehicles() {
-        if (useLocalBackend) {
-            try {
-                const res = await fetch('/api/clean-all', { method: 'POST' });
-                const data = await res.json();
-                alert(data.message);
-                loadData();
-                return;
-            } catch (e) {}
-        }
-
-        // Client fallback (Clean all in FIFO Queue)
-        if (cleaningQueue.length === 0) {
-            alert('Cleaning bay queue is already empty!');
-            return;
-        }
-
-        const count = cleaningQueue.length;
-        while (cleaningQueue.length > 0) {
-            const item = cleaningQueue.shift();
-            const v = fleetData.find(x => x.id === item.id);
-            if (v) v.status = 'AVAILABLE';
-        }
-        saveClientState();
-        alert(`All ${count} vehicle(s) successfully washed and marked AVAILABLE!`);
-        loadData();
-    }
-
-    function openAddVehicleModal() {
-        toggleAddFields();
-        openModal('add-modal');
-    }
-
-    function toggleAddFields() {
-        const cat = document.getElementById('add-cat').value;
-        document.getElementById('add-tw-fields').style.display = (cat === 'TWO_WHEELER') ? 'block' : 'none';
-        document.getElementById('add-fw-fields').style.display = (cat === 'FOUR_WHEELER') ? 'block' : 'none';
-    }
-
-    async function submitAddVehicle() {
-        const cat = document.getElementById('add-cat').value;
-        const id = document.getElementById('add-id').value.trim();
-        const brand = document.getElementById('add-brand').value.trim();
-        const model = document.getElementById('add-model').value.trim();
-        const dailyRate = parseFloat(document.getElementById('add-rate').value) || 0;
-        const lateFine = parseFloat(document.getElementById('add-fine').value) || 0;
-
-        if (!id || !brand || !model || dailyRate <= 0) {
-            alert('Please fill out all required fields with valid values');
-            return;
-        }
-
-        if (fleetData.some(x => x.id.toUpperCase() === id.toUpperCase())) {
-            alert(`Vehicle ID '${id}' already exists!`);
-            return;
-        }
-
-        let specs = "";
-        if (cat === 'TWO_WHEELER') {
-            const cc = parseInt(document.getElementById('add-cc').value) || 125;
-            const geared = document.getElementById('add-geared').value === '1';
-            specs = `${cc}cc, ${geared ? 'Geared' : 'Automatic / Scooter'}, Helmet Incl.`;
-        } else {
-            const seats = parseInt(document.getElementById('add-seats').value) || 5;
-            const trans = document.getElementById('add-trans').value;
-            const fuel = document.getElementById('add-fuel').value;
-            specs = `${seats} Seater, ${trans}, ${fuel}`;
-        }
-
-        const newVehicle = {
-            id: id.toUpperCase(),
-            brand,
-            model,
-            type: cat,
-            category: cat === 'TWO_WHEELER' ? '2-Wheeler' : '4-Wheeler',
-            specs,
-            dailyRate,
-            lateFine,
-            status: 'AVAILABLE',
-            customerName: '',
-            customerPhone: '',
-            rentedForDays: 0
-        };
-
-        if (useLocalBackend) {
-            try {
-                await fetch('/api/add-vehicle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newVehicle)
+            // If sent to Cleaning or Maintenance, enqueue into the FIFO Queue
+            if (nextStatus === 'CLEANING' || nextStatus === 'MAINTENANCE') {
+                cleaningQueue.push({
+                    vehicleId: v.id,
+                    vehicleName: `${v.brand} ${v.model}`,
+                    regNumber: v.regNumber,
+                    category: v.category,
+                    previousRenter: r.name,
+                    entryDate: actualDateStr,
+                    serviceType: nextStatus,
+                    notes: nextStatus === 'CLEANING' ? 'Post-rental wash & interior vacuum' : 'Inspection requested on return',
+                    condition: overdueDays > 0 ? 'Delayed return, inspect wear' : 'Standard return condition'
                 });
-            } catch (e) {}
+            }
+
+            saveState();
+            closeModal('modal-return');
+            updateOperationalSummary();
+            filterAndRenderInventory();
+
+            // Display printable voucher
+            showVoucherInvoice(invoiceRecord.rentalId);
         }
 
-        fleetData.push(newVehicle);
-        saveClientState();
-        closeModal('add-modal');
-        alert(`Vehicle [${id.toUpperCase()}] ${brand} ${model} added to fleet!`);
-        loadData();
-    }
+        // Voucher Display
+        function showVoucherInvoice(rentalId) {
+            const t = ledger.find(x => x.rentalId === rentalId);
+            if (!t) return;
 
-    // Startup Sequence
-    (async function init() {
-        await checkBackend();
-        await loadData();
-    })();
-</script>
+            const netSettle = t.totalBill - t.deposit;
+            const settlementLabel = netSettle >= 0 ? "NET BALANCE PAYABLE" : "REFUND AMOUNT DUE";
+
+            const container = document.getElementById('invoice-sheet-container');
+            container.innerHTML = `
+                <div class="voucher-header">
+                    <h3>WHEELS & WAYS RENTALS</h3>
+                    <div>Fleet Office &bull; New Delhi, India</div>
+                    <div style="margin-top: 4px; font-weight: 700;">FINAL SETTLEMENT RECEIPT</div>
+                </div>
+
+                <div class="voucher-row"><span>INVOICE NO:</span><strong>${t.rentalId}</strong></div>
+                <div class="voucher-row"><span>DATE:</span><span>${t.actualReturnDate}</span></div>
+                <div class="voucher-row"><span>CUSTOMER:</span><span>${t.customerName}</span></div>
+                <div class="voucher-row"><span>PHONE:</span><span>${t.customerPhone}</span></div>
+                <div class="voucher-row"><span>VEHICLE:</span><span>${t.vehicleId} (${t.vehicleName})</span></div>
+                <div class="voucher-row"><span>REG. NO:</span><span>${t.regNumber}</span></div>
+
+                <hr class="voucher-divider">
+
+                <div class="voucher-row"><span>Booked Duration:</span><span>${t.bookedDays} days @ ₹${t.dailyRate}/d</span></div>
+                <div class="voucher-row"><span>Actual Duration:</span><span>${t.actualDays} days</span></div>
+                <div class="voucher-row"><span>Base Rental Fare:</span><span>₹${t.baseFare.toFixed(2)}</span></div>
+
+                ${t.overdueDays > 0 ? `
+                    <div class="voucher-row" style="color: #b91c1c;">
+                        <span>Overdue Fine (${t.overdueDays}d @ ₹${t.lateFineRate}/d):</span>
+                        <strong>₹${t.totalFine.toFixed(2)}</strong>
+                    </div>
+                ` : `
+                    <div class="voucher-row"><span>Overdue Fine:</span><span>₹0.00 (On Time)</span></div>
+                `}
+
+                ${t.additionalCharges > 0 ? `
+                    <div class="voucher-row"><span>Additional Charges:</span><span>₹${t.additionalCharges.toFixed(2)}</span></div>
+                ` : ''}
+
+                <div class="voucher-row"><span>Gross Invoice Total:</span><strong>₹${t.totalBill.toFixed(2)}</strong></div>
+                <div class="voucher-row"><span>Less: Deposit Paid:</span><span>- ₹${t.deposit.toFixed(2)}</span></div>
+
+                <hr class="voucher-divider">
+
+                <div class="voucher-row voucher-total">
+                    <span>${settlementLabel}:</span>
+                    <span>₹${Math.abs(netSettle).toFixed(2)}</span>
+                </div>
+
+                <p style="text-align: center; margin-top: 14px; font-size: 10px; color: #666;">
+                    Generated by Wheels & Ways Management System &bull; Computer Generated Receipt
+                </p>
+            `;
+
+            openModal('modal-invoice');
+        }
+
+        // 3. Vehicle Details Modal
+        function viewVehicleDetails(vid) {
+            const v = fleet.find(x => x.id === vid);
+            if (!v) return;
+
+            document.getElementById('details-modal-title').innerText = `${v.id} — ${v.brand} ${v.model}`;
+            const container = document.getElementById('details-modal-content');
+            container.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <div>
+                        <span class="plate-badge font-mono" style="font-size: 13px;">${v.regNumber}</span>
+                        <span style="margin-left: 8px; color: var(--text-secondary);">${v.category}</span>
+                    </div>
+                    <span class="status-pill status-${v.status.toLowerCase()}">${v.status}</span>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Daily Rental Rate</label>
+                        <div class="font-mono" style="font-size: 15px; font-weight: 700;">₹${v.dailyRate.toLocaleString('en-IN')} / day</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Overdue Fine Rate</label>
+                        <div class="font-mono" style="font-size: 15px; font-weight: 700; color: var(--warning-text);">₹${v.lateFine.toLocaleString('en-IN')} / day</div>
+                    </div>
+                    <div class="form-group form-full">
+                        <label class="form-label">Specifications & Fleet Notes</label>
+                        <div style="background: var(--bg-app); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                            ${v.specs}
+                        </div>
+                    </div>
+                    ${v.status === 'RENTED' && v.currentRenter ? `
+                        <div class="form-group form-full">
+                            <label class="form-label">Active Rental Information</label>
+                            <div style="background: rgba(210, 153, 34, 0.08); border-left: 3px solid var(--warning-text); padding: 8px 12px; font-size: 12.5px;">
+                                Currently rented to <strong>${v.currentRenter.name}</strong> (${v.currentRenter.phone})<br>
+                                Booked from ${v.currentRenter.startDate} to ${v.currentRenter.expectedReturnDate} (${v.currentRenter.bookedDays} days)
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            openModal('modal-vehicle-details');
+        }
+
+        // 4. Register Vehicle Modal
+        function openAddVehicleModal() {
+            toggleAddVehicleCategoryFields();
+            openModal('modal-add-vehicle');
+        }
+
+        function toggleAddVehicleCategoryFields() {
+            const cat = document.getElementById('add-category').value;
+            document.getElementById('add-tw-block').style.display = (cat === 'TWO_WHEELER') ? 'contents' : 'none';
+            document.getElementById('add-fw-block').style.display = (cat === 'FOUR_WHEELER') ? 'contents' : 'none';
+        }
+
+        function submitRegisterVehicle() {
+            const cat = document.getElementById('add-category').value;
+            const id = document.getElementById('add-id').value.trim().toUpperCase();
+            const brand = document.getElementById('add-brand').value.trim();
+            const model = document.getElementById('add-model').value.trim();
+            const reg = document.getElementById('add-reg').value.trim().toUpperCase();
+            const rate = parseFloat(document.getElementById('add-rate').value) || 0;
+            const fine = parseFloat(document.getElementById('add-fine').value) || 0;
+
+            if (!id || !brand || !model || !reg || rate <= 0 || fine <= 0) {
+                alert('Please fill out all required fields with valid values.');
+                return;
+            }
+
+            if (fleet.some(x => x.id === id)) {
+                alert(`Vehicle ID '${id}' already exists in fleet.`);
+                return;
+            }
+
+            let specs = "";
+            if (cat === 'TWO_WHEELER') {
+                const cc = document.getElementById('add-cc').value || "125";
+                const gear = document.getElementById('add-geared').value;
+                specs = `${cc}cc, ${gear}, Helmet Provided`;
+            } else {
+                const seats = document.getElementById('add-seats').value || "5";
+                const trans = document.getElementById('add-transmission').value;
+                const fuel = document.getElementById('add-fuel').value;
+                specs = `${seats}-Seater, ${trans}, ${fuel}, AC`;
+            }
+
+            const newV = {
+                id: id,
+                brand: brand,
+                model: model,
+                category: (cat === 'TWO_WHEELER') ? '2-Wheeler' : '4-Wheeler',
+                type: cat,
+                regNumber: reg,
+                dailyRate: rate,
+                lateFine: fine,
+                status: 'AVAILABLE',
+                specs: specs,
+                currentRenter: null
+            };
+
+            fleet.push(newV);
+            saveState();
+            closeModal('modal-add-vehicle');
+            updateOperationalSummary();
+            filterAndRenderInventory();
+            alert(`New vehicle ${id} (${brand} ${model}) successfully registered.`);
+        }
+
+        // Export Fleet CSV
+        function exportFleetCsv() {
+            let csv = "Vehicle ID,Brand,Model,Category,Registration,Daily Rate,Late Fine,Status\n";
+            fleet.forEach(v => {
+                csv += `"${v.id}","${v.brand}","${v.model}","${v.category}","${v.regNumber}",${v.dailyRate},${v.lateFine},"${v.status}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `wheels_ways_fleet_${new Date().toISOString().split('T')[0]}.csv`);
+            a.click();
+        }
+
+        // Application Bootstrapper
+        (function boot() {
+            loadState();
+            updateOperationalSummary();
+            filterAndRenderInventory();
+        })();
+    </script>
 </body>
 </html>
