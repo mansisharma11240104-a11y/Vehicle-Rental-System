@@ -40,7 +40,6 @@
             margin: 0 auto;
         }
 
-        /* Top Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -69,6 +68,13 @@
             margin-top: 4px;
         }
 
+        .header-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .server-status {
             display: inline-flex;
             align-items: center;
@@ -88,6 +94,19 @@
             background-color: #22c55e;
             border-radius: 50%;
             box-shadow: 0 0 10px #22c55e;
+        }
+
+        .mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
         /* Stats Grid */
@@ -127,7 +146,7 @@
         .val-blue { color: #38bdf8; }
         .val-purple { color: #c084fc; }
 
-        /* Controls & Action Buttons */
+        /* Toolbar */
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -183,34 +202,14 @@
             transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: var(--accent);
-            color: #0f172a;
-        }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-        }
+        .btn-primary { background: var(--accent); color: #0f172a; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-success { background: var(--green); color: #0f172a; }
+        .btn-warning { background: var(--amber); color: #0f172a; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-card); }
 
-        .btn-success {
-            background: var(--green);
-            color: #0f172a;
-        }
-
-        .btn-warning {
-            background: var(--amber);
-            color: #0f172a;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-main);
-        }
-        .btn-outline:hover {
-            background: var(--bg-card);
-        }
-
-        /* Vehicle Cards Grid */
+        /* Fleet Cards */
         .vehicle-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -332,7 +331,7 @@
             justify-content: center;
         }
 
-        /* Cleaning Bay view */
+        /* Cleaning Bay View */
         .queue-container {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
@@ -406,13 +405,10 @@
             border-bottom: 1px solid rgba(51, 65, 85, 0.5);
         }
 
-        /* Modal */
+        /* Modals */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.75);
             display: none;
             justify-content: center;
@@ -422,9 +418,7 @@
             backdrop-filter: blur(4px);
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .modal-card {
             background: var(--bg-secondary);
@@ -450,9 +444,7 @@
             align-items: center;
         }
 
-        .modal-header h2 {
-            font-size: 1.25rem;
-        }
+        .modal-header h2 { font-size: 1.25rem; }
 
         .btn-close {
             background: transparent;
@@ -491,9 +483,7 @@
             outline: none;
         }
 
-        .form-input:focus, .form-select:focus {
-            border-color: var(--accent);
-        }
+        .form-input:focus, .form-select:focus { border-color: var(--accent); }
 
         .price-preview-box {
             background: var(--bg-card);
@@ -566,9 +556,12 @@
             <h1>🚗 Wheels & Ways</h1>
             <p>Vehicle Rental & Fleet Management System (2-Wheelers & 4-Wheelers)</p>
         </div>
-        <div class="server-status">
-            <span class="pulse-dot"></span>
-            <span>Localhost:8080 Active</span>
+        <div class="header-badges">
+            <div class="server-status">
+                <span class="pulse-dot"></span>
+                <span id="env-badge-text">Live Dashboard</span>
+            </div>
+            <span class="mode-badge" id="mode-badge">⚡ Interactive Engine</span>
         </div>
     </header>
 
@@ -614,9 +607,7 @@
 
     <!-- View: Vehicle Fleet Grid -->
     <div id="fleet-view">
-        <div class="vehicle-grid" id="vehicle-grid">
-            <!-- Cards rendered dynamically -->
-        </div>
+        <div class="vehicle-grid" id="vehicle-grid"></div>
     </div>
 
     <!-- View: Cleaning Bay Queue -->
@@ -634,9 +625,7 @@
                     <button class="btn btn-success" onclick="cleanAllVehicles()">Clean & Restock All</button>
                 </div>
             </div>
-            <div id="queue-list" class="queue-list">
-                <!-- Queue rendered here -->
-            </div>
+            <div id="queue-list" class="queue-list"></div>
         </div>
     </div>
 
@@ -657,9 +646,7 @@
                         <th>Total Paid</th>
                     </tr>
                 </thead>
-                <tbody id="history-tbody">
-                    <!-- History rows -->
-                </tbody>
+                <tbody id="history-tbody"></tbody>
             </table>
         </div>
     </div>
@@ -677,9 +664,7 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>Select Available Vehicle</label>
-                <select class="form-select" id="rent-vehicle-select" onchange="updateRentEstimate()">
-                    <!-- Options populated via JS -->
-                </select>
+                <select class="form-select" id="rent-vehicle-select" onchange="updateRentEstimate()"></select>
             </div>
             <div class="form-group">
                 <label>Customer Full Name</label>
@@ -725,9 +710,7 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>Select Rented Vehicle</label>
-                <select class="form-select" id="return-vehicle-select" onchange="updateReturnCalculation()">
-                    <!-- Populated via JS -->
-                </select>
+                <select class="form-select" id="return-vehicle-select" onchange="updateReturnCalculation()"></select>
             </div>
             <div class="form-group">
                 <label>Actual Days Vehicle Was Kept</label>
@@ -767,9 +750,7 @@
             <button class="btn-close" onclick="closeModal('invoice-modal')">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="invoice-box" id="invoice-sheet">
-                <!-- Injected via JS -->
-            </div>
+            <div class="invoice-box" id="invoice-sheet"></div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="closeModal('invoice-modal')">Done</button>
@@ -859,43 +840,118 @@
 </div>
 
 <script>
-    let fleetData = [];
+    // Hybrid State Engine: Works both with local C++ web server AND fully client-side on Vercel deployment!
+    let useLocalBackend = false;
     let currentFilter = 'all';
 
-    async function loadData() {
-        try {
-            const [vRes, sRes, qRes, hRes] = await Promise.all([
-                fetch('/api/vehicles'),
-                fetch('/api/stats'),
-                fetch('/api/cleaning-bay'),
-                fetch('/api/history')
-            ]);
+    // Default Seed Data matching the C++ Vehicle Rental System
+    const DEFAULT_VEHICLES = [
+        { id: "TW101", brand: "Honda", model: "Activa 6G", type: "TWO_WHEELER", category: "2-Wheeler", specs: "110cc, Automatic / Scooter, Helmet Incl.", dailyRate: 350, lateFine: 100, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "TW102", brand: "Royal Enfield", model: "Classic 350", type: "TWO_WHEELER", category: "2-Wheeler", specs: "350cc, Geared, Helmet Incl.", dailyRate: 900, lateFine: 300, status: "RENTED", customerName: "Rahul Sharma", customerPhone: "9876543210", rentedForDays: 3 },
+        { id: "TW103", brand: "Yamaha", model: "R15 V4", type: "TWO_WHEELER", category: "2-Wheeler", specs: "155cc, Geared, Helmet Incl.", dailyRate: 750, lateFine: 250, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "TW104", brand: "TVS", model: "Jupiter 125", type: "TWO_WHEELER", category: "2-Wheeler", specs: "125cc, Automatic / Scooter, Helmet Incl.", dailyRate: 380, lateFine: 120, status: "IN_CLEANING", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "FW201", brand: "Maruti", model: "Swift Dzire", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "5 Seater, Manual, Petrol", dailyRate: 1600, lateFine: 500, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "FW202", brand: "Hyundai", model: "Creta SX", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "5 Seater, Automatic, Diesel", dailyRate: 2500, lateFine: 800, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "FW203", brand: "Mahindra", model: "Thar 4x4", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "4 Seater, Manual, Diesel", dailyRate: 3200, lateFine: 1000, status: "RENTED", customerName: "Priya Patel", customerPhone: "9123456789", rentedForDays: 2 },
+        { id: "FW204", brand: "Toyota", model: "Innova Crysta", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "7 Seater, Automatic, Diesel", dailyRate: 3800, lateFine: 1200, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 }
+    ];
 
-            fleetData = await vRes.json();
-            const stats = await sRes.json();
-            const queue = await qRes.json();
-            const history = await hRes.json();
+    const DEFAULT_HISTORY = [
+        { transactionId: "TXN-1000", vehicleId: "FW201", vehicleName: "Maruti Swift Dzire", category: "4-Wheeler", customerName: "Amit Kumar", customerPhone: "9988776655", bookedDays: 2, actualDays: 3, overdueDays: 1, dailyRate: 1600, baseFare: 3200, totalFine: 500, totalBill: 3700 }
+    ];
 
-            // Render stats
-            document.getElementById('stat-total').innerText = stats.total;
-            document.getElementById('stat-available').innerText = stats.available;
-            document.getElementById('stat-rented').innerText = stats.rented;
-            document.getElementById('stat-cleaning').innerText = stats.cleaning;
-            document.getElementById('tab-cleaning-count').innerText = stats.cleaning;
-            document.getElementById('stat-revenue').innerText = 'Rs. ' + stats.revenue.toLocaleString();
+    let fleetData = [];
+    let cleaningQueue = [];
+    let transactionHistory = [];
+    let nextTxnSeq = 1002;
 
-            // Render fleet cards
-            renderFleetCards();
+    function initClientEngine() {
+        const storedFleet = localStorage.getItem('vrs_fleet');
+        const storedHistory = localStorage.getItem('vrs_history');
+        const storedQueue = localStorage.getItem('vrs_queue');
 
-            // Render cleaning queue
-            renderCleaningBay(queue);
-
-            // Render history table
-            renderHistoryTable(history);
-
-        } catch (err) {
-            console.error('Error fetching system data:', err);
+        fleetData = storedFleet ? JSON.parse(storedFleet) : JSON.parse(JSON.stringify(DEFAULT_VEHICLES));
+        transactionHistory = storedHistory ? JSON.parse(storedHistory) : JSON.parse(JSON.stringify(DEFAULT_HISTORY));
+        
+        if (storedQueue) {
+            cleaningQueue = JSON.parse(storedQueue);
+        } else {
+            cleaningQueue = [{ id: "TW104", name: "TVS Jupiter 125", category: "2-Wheeler", specs: "125cc, Automatic / Scooter, Helmet Incl." }];
         }
+    }
+
+    function saveClientState() {
+        if (!useLocalBackend) {
+            localStorage.setItem('vrs_fleet', JSON.stringify(fleetData));
+            localStorage.setItem('vrs_history', JSON.stringify(transactionHistory));
+            localStorage.setItem('vrs_queue', JSON.stringify(cleaningQueue));
+        }
+    }
+
+    async function checkBackend() {
+        try {
+            const res = await fetch('/api/stats', { signal: AbortSignal.timeout(1500) });
+            if (res.ok) {
+                useLocalBackend = true;
+                document.getElementById('env-badge-text').innerText = 'Localhost:8080 C++ Active';
+                document.getElementById('mode-badge').innerText = '⚡ C++ Native Server';
+            } else {
+                throw new Error('Not local backend');
+            }
+        } catch (e) {
+            useLocalBackend = false;
+            document.getElementById('env-badge-text').innerText = 'Cloud Active (Vercel)';
+            document.getElementById('mode-badge').innerText = '🚀 Client Engine Mode';
+            initClientEngine();
+        }
+    }
+
+    async function loadData() {
+        if (useLocalBackend) {
+            try {
+                const [vRes, sRes, qRes, hRes] = await Promise.all([
+                    fetch('/api/vehicles'),
+                    fetch('/api/stats'),
+                    fetch('/api/cleaning-bay'),
+                    fetch('/api/history')
+                ]);
+                fleetData = await vRes.json();
+                const stats = await sRes.json();
+                const queue = await qRes.json();
+                const history = await hRes.json();
+
+                renderStats(stats);
+                renderFleetCards();
+                renderCleaningBay(queue);
+                renderHistoryTable(history);
+                return;
+            } catch (err) {
+                console.warn('Backend disconnected, falling back to client mode');
+                useLocalBackend = false;
+                initClientEngine();
+            }
+        }
+
+        // Client-side computation
+        const total = fleetData.length;
+        const available = fleetData.filter(v => v.status === 'AVAILABLE').length;
+        const rented = fleetData.filter(v => v.status === 'RENTED').length;
+        const cleaning = cleaningQueue.length;
+        const revenue = transactionHistory.reduce((acc, t) => acc + t.totalBill, 0);
+
+        renderStats({ total, available, rented, cleaning, revenue });
+        renderFleetCards();
+        renderCleaningBay(cleaningQueue);
+        renderHistoryTable(transactionHistory);
+    }
+
+    function renderStats(stats) {
+        document.getElementById('stat-total').innerText = stats.total;
+        document.getElementById('stat-available').innerText = stats.available;
+        document.getElementById('stat-rented').innerText = stats.rented;
+        document.getElementById('stat-cleaning').innerText = stats.cleaning;
+        document.getElementById('tab-cleaning-count').innerText = stats.cleaning;
+        document.getElementById('stat-revenue').innerText = 'Rs. ' + stats.revenue.toLocaleString();
     }
 
     function renderFleetCards() {
@@ -926,7 +982,7 @@
             } else if (v.status === 'RENTED') {
                 actionBtn = `<button class="btn btn-warning" onclick="quickReturn('${v.id}')">Process Return</button>`;
             } else {
-                actionBtn = `<button class="btn btn-outline" onclick="cleanNextVehicle()">In Cleaning Line</button>`;
+                actionBtn = `<button class="btn btn-outline" onclick="cleanNextVehicle()">In Cleaning Bay</button>`;
             }
 
             let rentalHtml = '';
@@ -934,13 +990,13 @@
                 rentalHtml = `
                     <div class="rental-info-box">
                         <strong>Rented to:</strong> ${v.customerName}<br>
-                        <strong>Duration:</strong> ${v.rentedForDays} day(s) (${v.customerPhone})
+                        <strong>Duration:</strong> ${v.rentedForDays} day(s) (${v.customerPhone || 'N/A'})
                     </div>
                 `;
             } else if (v.status === 'IN_CLEANING') {
                 rentalHtml = `
                     <div class="rental-info-box" style="border-left-color: var(--blue); background: rgba(6,182,212,0.1);">
-                        <strong>Status:</strong> In washing & inspection queue
+                        <strong>Status:</strong> Awaiting wash in FIFO queue
                     </div>
                 `;
             }
@@ -985,7 +1041,7 @@
         container.innerHTML = '';
 
         if (!queue || queue.length === 0) {
-            container.innerHTML = '<div class="empty-state">Cleaning Bay is currently empty. All vehicles are clean!</div>';
+            container.innerHTML = '<div class="empty-state">Cleaning Bay is currently empty. All vehicles are sanitized & ready!</div>';
             return;
         }
 
@@ -1046,7 +1102,6 @@
         }
     }
 
-    // Modal Handlers
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
@@ -1072,9 +1127,7 @@
         openModal('rent-modal');
     }
 
-    function quickRent(id) {
-        openRentModal(id);
-    }
+    function quickRent(id) { openRentModal(id); }
 
     function updateRentEstimate() {
         const selId = document.getElementById('rent-vehicle-select').value;
@@ -1099,24 +1152,42 @@
             return;
         }
 
-        try {
-            const res = await fetch('/api/rent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vehicleId, customerName, customerPhone, days })
-            });
-            const data = await res.json();
-            if (data.success) {
-                closeModal('rent-modal');
-                document.getElementById('rent-cust-name').value = '';
-                document.getElementById('rent-cust-phone').value = '';
-                loadData();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        } catch (err) {
-            alert('Request failed');
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/rent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehicleId, customerName, customerPhone, days })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal('rent-modal');
+                    resetRentForm();
+                    loadData();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+                return;
+            } catch (e) {}
         }
+
+        // Client engine fallback
+        const v = fleetData.find(x => x.id === vehicleId);
+        if (v && v.status === 'AVAILABLE') {
+            v.status = 'RENTED';
+            v.customerName = customerName;
+            v.customerPhone = customerPhone;
+            v.rentedForDays = days;
+            saveClientState();
+            closeModal('rent-modal');
+            resetRentForm();
+            loadData();
+        }
+    }
+
+    function resetRentForm() {
+        document.getElementById('rent-cust-name').value = '';
+        document.getElementById('rent-cust-phone').value = '';
     }
 
     function openReturnModal(preselectId) {
@@ -1141,9 +1212,7 @@
         openModal('return-modal');
     }
 
-    function quickReturn(id) {
-        openReturnModal(id);
-    }
+    function quickReturn(id) { openReturnModal(id); }
 
     function updateReturnCalculation() {
         const selId = document.getElementById('return-vehicle-select').value;
@@ -1168,23 +1237,69 @@
         const vehicleId = document.getElementById('return-vehicle-select').value;
         const actualDays = parseInt(document.getElementById('return-actual-days').value) || 1;
 
-        try {
-            const res = await fetch('/api/return', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vehicleId, actualDays })
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/return', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehicleId, actualDays })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal('return-modal');
+                    showInvoice(data.invoice);
+                    loadData();
+                    return;
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {}
+        }
+
+        // Client engine fallback
+        const v = fleetData.find(x => x.id === vehicleId);
+        if (v && v.status === 'RENTED') {
+            const bookedDays = v.rentedForDays || 1;
+            const overdueDays = Math.max(0, actualDays - bookedDays);
+            const baseFare = bookedDays * v.dailyRate;
+            const fine = overdueDays * v.lateFine;
+            const totalBill = baseFare + fine;
+
+            const invoice = {
+                transactionId: "TXN-" + (nextTxnSeq++),
+                vehicleId: v.id,
+                vehicleName: v.brand + " " + v.model,
+                category: v.category,
+                customerName: v.customerName,
+                customerPhone: v.customerPhone,
+                bookedDays: bookedDays,
+                actualDays: actualDays,
+                overdueDays: overdueDays,
+                dailyRate: v.dailyRate,
+                baseFare: baseFare,
+                totalFine: fine,
+                totalBill: totalBill
+            };
+
+            transactionHistory.unshift(invoice);
+
+            // Move to Cleaning (FIFO Queue)
+            v.status = 'IN_CLEANING';
+            v.customerName = "";
+            v.customerPhone = "";
+            v.rentedForDays = 0;
+
+            cleaningQueue.push({
+                id: v.id,
+                name: v.brand + " " + v.model,
+                category: v.category,
+                specs: v.specs
             });
-            const data = await res.json();
-            if (data.success) {
-                closeModal('return-modal');
-                // Show invoice modal
-                showInvoice(data.invoice);
-                loadData();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        } catch (err) {
-            alert('Request failed');
+
+            saveClientState();
+            closeModal('return-modal');
+            showInvoice(invoice);
+            loadData();
         }
     }
 
@@ -1194,7 +1309,7 @@
             <div class="invoice-title">WHEELS & WAYS RENTAL INVOICE</div>
             <div class="inv-row"><span>Invoice ID:</span><strong>${inv.transactionId}</strong></div>
             <div class="inv-row"><span>Customer:</span><strong>${inv.customerName}</strong></div>
-            <div class="inv-row"><span>Phone:</span><strong>${inv.customerPhone}</strong></div>
+            <div class="inv-row"><span>Phone:</span><strong>${inv.customerPhone || 'N/A'}</strong></div>
             <div class="inv-row"><span>Vehicle:</span><strong>${inv.vehicleId} (${inv.vehicleName})</strong></div>
             <div class="inv-row"><span>Category:</span><strong>${inv.category}</strong></div>
             <hr style="margin: 10px 0; border: none; border-top: 1px dashed #000;">
@@ -1205,32 +1320,62 @@
             <div class="inv-row"><span>Late Return Fine:</span><strong style="color: red;">Rs. ${inv.totalFine.toFixed(2)}</strong></div>
             <div class="inv-row inv-total"><span>TOTAL AMOUNT:</span><span>Rs. ${inv.totalBill.toFixed(2)}</span></div>
             <p style="text-align: center; margin-top: 14px; font-size: 0.8rem; color: #555;">
-                Vehicle automatically transferred to Cleaning Bay Queue.
+                Vehicle automatically routed to Cleaning Bay (FIFO Queue).
             </p>
         `;
         openModal('invoice-modal');
     }
 
     async function cleanNextVehicle() {
-        const res = await fetch('/api/clean-next', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            alert(data.message);
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/clean-next', { method: 'POST' });
+                const data = await res.json();
+                alert(data.message);
+                loadData();
+                return;
+            } catch (e) {}
+        }
+
+        // Client fallback (FIFO Queue Pop)
+        if (cleaningQueue.length > 0) {
+            const next = cleaningQueue.shift();
+            const v = fleetData.find(x => x.id === next.id);
+            if (v) v.status = 'AVAILABLE';
+            saveClientState();
+            alert(`Vehicle ${next.id} (${next.name}) washed, inspected, and restored to AVAILABLE!`);
             loadData();
         } else {
-            alert(data.message);
+            alert('Cleaning bay queue is empty!');
         }
     }
 
     async function cleanAllVehicles() {
-        const res = await fetch('/api/clean-all', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-            alert(data.message);
-            loadData();
-        } else {
-            alert(data.message);
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/clean-all', { method: 'POST' });
+                const data = await res.json();
+                alert(data.message);
+                loadData();
+                return;
+            } catch (e) {}
         }
+
+        // Client fallback (Clean all in FIFO Queue)
+        if (cleaningQueue.length === 0) {
+            alert('Cleaning bay queue is already empty!');
+            return;
+        }
+
+        const count = cleaningQueue.length;
+        while (cleaningQueue.length > 0) {
+            const item = cleaningQueue.shift();
+            const v = fleetData.find(x => x.id === item.id);
+            if (v) v.status = 'AVAILABLE';
+        }
+        saveClientState();
+        alert(`All ${count} vehicle(s) successfully washed and marked AVAILABLE!`);
+        loadData();
     }
 
     function openAddVehicleModal() {
@@ -1257,41 +1402,60 @@
             return;
         }
 
-        const payload = {
-            category: cat,
-            id, brand, model, dailyRate, lateFine
+        if (fleetData.some(x => x.id.toUpperCase() === id.toUpperCase())) {
+            alert(`Vehicle ID '${id}' already exists!`);
+            return;
+        }
+
+        let specs = "";
+        if (cat === 'TWO_WHEELER') {
+            const cc = parseInt(document.getElementById('add-cc').value) || 125;
+            const geared = document.getElementById('add-geared').value === '1';
+            specs = `${cc}cc, ${geared ? 'Geared' : 'Automatic / Scooter'}, Helmet Incl.`;
+        } else {
+            const seats = parseInt(document.getElementById('add-seats').value) || 5;
+            const trans = document.getElementById('add-trans').value;
+            const fuel = document.getElementById('add-fuel').value;
+            specs = `${seats} Seater, ${trans}, ${fuel}`;
+        }
+
+        const newVehicle = {
+            id: id.toUpperCase(),
+            brand,
+            model,
+            type: cat,
+            category: cat === 'TWO_WHEELER' ? '2-Wheeler' : '4-Wheeler',
+            specs,
+            dailyRate,
+            lateFine,
+            status: 'AVAILABLE',
+            customerName: '',
+            customerPhone: '',
+            rentedForDays: 0
         };
 
-        if (cat === 'TWO_WHEELER') {
-            payload.cc = parseInt(document.getElementById('add-cc').value) || 125;
-            payload.geared = document.getElementById('add-geared').value === '1';
-        } else {
-            payload.seats = parseInt(document.getElementById('add-seats').value) || 5;
-            payload.transmission = document.getElementById('add-trans').value;
-            payload.fuelType = document.getElementById('add-fuel').value;
+        if (useLocalBackend) {
+            try {
+                await fetch('/api/add-vehicle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newVehicle)
+                });
+            } catch (e) {}
         }
 
-        try {
-            const res = await fetch('/api/add-vehicle', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
-            if (data.success) {
-                closeModal('add-modal');
-                alert(data.message);
-                loadData();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        } catch (err) {
-            alert('Failed to add vehicle');
-        }
+        fleetData.push(newVehicle);
+        saveClientState();
+        closeModal('add-modal');
+        alert(`Vehicle [${id.toUpperCase()}] ${brand} ${model} added to fleet!`);
+        loadData();
     }
 
-    // Initial fetch
-    loadData();
+    // Startup Sequence
+    (async function init() {
+        await checkBackend();
+        await loadData();
+    })();
 </script>
 </body>
 </html>

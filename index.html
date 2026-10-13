@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheels & Ways | Vehicle Rental System</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #273549;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --blue: #06b6d4;
+            --red: #ef4444;
+            --border: #334155;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .header-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .server-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-title {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .val-green { color: #4ade80; }
+        .val-amber { color: #fbbf24; }
+        .val-blue { color: #38bdf8; }
+        .val-purple { color: #c084fc; }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #0f172a;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--accent); color: #0f172a; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-success { background: var(--green); color: #0f172a; }
+        .btn-warning { background: var(--amber); color: #0f172a; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-card); }
+
+        /* Fleet Cards */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .v-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .v-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+
+        .v-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .v-id {
+            background: #334155;
+            color: #e2e8f0;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .v-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .v-cat-badge {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-AVAILABLE {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+        .status-RENTED {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .status-CLEANING {
+            background: rgba(6, 182, 212, 0.2);
+            color: #22d3ee;
+            border: 1px solid rgba(6, 182, 212, 0.4);
+        }
+
+        .v-specs {
+            background: var(--bg-card);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin: 14px 0;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        .v-rates {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rate-item span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .rate-item strong {
+            font-size: 1.05rem;
+            color: #f1f5f9;
+        }
+
+        .rental-info-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--amber);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            margin-bottom: 14px;
+        }
+
+        .v-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .v-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Cleaning Bay View */
+        .queue-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .queue-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .queue-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+
+        .queue-pos {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--accent);
+            width: 40px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+        }
+
+        /* History Table */
+        .table-responsive {
+            overflow-x: auto;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #192231;
+            padding: 12px 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            animation: popIn 0.2s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { font-size: 1.25rem; }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .form-input, .form-select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-input:focus, .form-select:focus { border-color: var(--accent); }
+
+        .price-preview-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 0.9rem;
+        }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .preview-total {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            border-top: 1px dashed var(--border);
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Invoice Sheet */
+        .invoice-box {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 8px;
+            padding: 24px;
+            font-family: monospace;
+        }
+        .invoice-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+        .inv-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+        .inv-total {
+            border-top: 2px dashed #000;
+            margin-top: 12px;
+            padding-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Header -->
+    <header>
+        <div class="header-title">
+            <h1>🚗 Wheels & Ways</h1>
+            <p>Vehicle Rental & Fleet Management System (2-Wheelers & 4-Wheelers)</p>
+        </div>
+        <div class="header-badges">
+            <div class="server-status">
+                <span class="pulse-dot"></span>
+                <span id="env-badge-text">Live Dashboard</span>
+            </div>
+            <span class="mode-badge" id="mode-badge">⚡ Interactive Engine</span>
+        </div>
+    </header>
+
+    <!-- Stats KPI Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-title">Total Fleet</span>
+            <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Available</span>
+            <span class="stat-value val-green" id="stat-available">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Currently Rented</span>
+            <span class="stat-value val-amber" id="stat-rented">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Cleaning Queue</span>
+            <span class="stat-value val-blue" id="stat-cleaning">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Total Revenue</span>
+            <span class="stat-value val-purple" id="stat-revenue">Rs. 0</span>
+        </div>
+    </div>
+
+    <!-- Toolbar: Tabs & Buttons -->
+    <div class="toolbar">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('all')">All Fleet</button>
+            <button class="tab-btn" onclick="switchTab('two')">🛵 2-Wheelers</button>
+            <button class="tab-btn" onclick="switchTab('four')">🚗 4-Wheelers</button>
+            <button class="tab-btn" onclick="switchTab('cleaning')">🧼 Cleaning Bay (<span id="tab-cleaning-count">0</span>)</button>
+            <button class="tab-btn" onclick="switchTab('history')">📜 Rental Ledger</button>
+        </div>
+        <div class="action-btns">
+            <button class="btn btn-outline" onclick="openAddVehicleModal()">➕ Add Vehicle</button>
+            <button class="btn btn-primary" onclick="openRentModal()">🔑 Rent Vehicle</button>
+            <button class="btn btn-warning" onclick="openReturnModal()">🔄 Return Vehicle</button>
+        </div>
+    </div>
+
+    <!-- View: Vehicle Fleet Grid -->
+    <div id="fleet-view">
+        <div class="vehicle-grid" id="vehicle-grid"></div>
+    </div>
+
+    <!-- View: Cleaning Bay Queue -->
+    <div id="cleaning-view" style="display: none;">
+        <div class="queue-container">
+            <div class="queue-header">
+                <div>
+                    <h2>🧼 Vehicle Sanitization & Cleaning Bay</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">
+                        Operates as a <strong>FIFO Queue (First In, First Out)</strong>. Returned vehicles are automatically queued here.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="cleanNextVehicle()">Clean Next in Line</button>
+                    <button class="btn btn-success" onclick="cleanAllVehicles()">Clean & Restock All</button>
+                </div>
+            </div>
+            <div id="queue-list" class="queue-list"></div>
+        </div>
+    </div>
+
+    <!-- View: Transaction History -->
+    <div id="history-view" style="display: none;">
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Vehicle</th>
+                        <th>Category</th>
+                        <th>Customer</th>
+                        <th>Booked</th>
+                        <th>Actual</th>
+                        <th>Base Fare</th>
+                        <th>Late Fine</th>
+                        <th>Total Paid</th>
+                    </tr>
+                </thead>
+                <tbody id="history-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Modal: Rent Vehicle -->
+<div class="modal-overlay" id="rent-modal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>🔑 Rent a Vehicle</h2>
+            <button class="btn-close" onclick="closeModal('rent-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Select Available Vehicle</label>
+                <select class="form-select" id="rent-vehicle-select" onchange="updateRentEstimate()"></select>
+            </div>
+            <div class="form-group">
+                <label>Customer Full Name</label>
+                <input type="text" class="form-input" id="rent-cust-name" placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+                <label>Customer Phone Number</label>
+                <input type="text" class="form-input" id="rent-cust-phone" placeholder="e.g. 9876543210">
+            </div>
+            <div class="form-group">
+                <label>Booking Duration (Days)</label>
+                <input type="number" class="form-input" id="rent-days" value="1" min="1" oninput="updateRentEstimate()">
+            </div>
+            <div class="price-preview-box">
+                <div class="preview-row">
+                    <span>Daily Rate:</span>
+                    <strong id="rent-daily-rate">Rs. 0/day</strong>
+                </div>
+                <div class="preview-row">
+                    <span>Late Fine Policy:</span>
+                    <span id="rent-fine-rate" style="color: #fbbf24;">Rs. 0/day</span>
+                </div>
+                <div class="preview-row preview-total">
+                    <span>Estimated Total Fare:</span>
+                    <span id="rent-est-total">Rs. 0</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('rent-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="submitRent()">Confirm Rental</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Return Vehicle -->
+<div class="modal-overlay" id="return-modal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>🔄 Return Rented Vehicle</h2>
+            <button class="btn-close" onclick="closeModal('return-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Select Rented Vehicle</label>
+                <select class="form-select" id="return-vehicle-select" onchange="updateReturnCalculation()"></select>
+            </div>
+            <div class="form-group">
+                <label>Actual Days Vehicle Was Kept</label>
+                <input type="number" class="form-input" id="return-actual-days" value="1" min="1" oninput="updateReturnCalculation()">
+            </div>
+            <div class="price-preview-box">
+                <div class="preview-row">
+                    <span>Booked Days:</span>
+                    <strong id="ret-booked-days">0 day(s)</strong>
+                </div>
+                <div class="preview-row">
+                    <span>Base Fare:</span>
+                    <strong id="ret-base-fare">Rs. 0</strong>
+                </div>
+                <div class="preview-row" id="ret-fine-row">
+                    <span>Late Return Fine:</span>
+                    <strong id="ret-fine" style="color: #f87171;">Rs. 0</strong>
+                </div>
+                <div class="preview-row preview-total">
+                    <span>Final Amount Payable:</span>
+                    <span id="ret-total-bill">Rs. 0</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('return-modal')">Cancel</button>
+            <button class="btn btn-warning" onclick="submitReturn()">Complete Return & Invoice</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Printable Receipt / Invoice -->
+<div class="modal-overlay" id="invoice-modal">
+    <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+            <h2>🧾 Rental Invoice & Receipt</h2>
+            <button class="btn-close" onclick="closeModal('invoice-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="invoice-box" id="invoice-sheet"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeModal('invoice-modal')">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add New Vehicle -->
+<div class="modal-overlay" id="add-modal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>➕ Add New Vehicle to Fleet</h2>
+            <button class="btn-close" onclick="closeModal('add-modal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Category</label>
+                <select class="form-select" id="add-cat" onchange="toggleAddFields()">
+                    <option value="TWO_WHEELER">2-Wheeler (Motorcycle / Scooter)</option>
+                    <option value="FOUR_WHEELER">4-Wheeler (Car / SUV)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Unique Vehicle ID</label>
+                <input type="text" class="form-input" id="add-id" placeholder="e.g. TW105 or FW205">
+            </div>
+            <div class="form-group">
+                <label>Brand</label>
+                <input type="text" class="form-input" id="add-brand" placeholder="e.g. Royal Enfield or Hyundai">
+            </div>
+            <div class="form-group">
+                <label>Model Name</label>
+                <input type="text" class="form-input" id="add-model" placeholder="e.g. Hunter 350 or Venue">
+            </div>
+            <div class="form-group">
+                <label>Daily Rental Rate (Rs.)</label>
+                <input type="number" class="form-input" id="add-rate" placeholder="e.g. 800">
+            </div>
+            <div class="form-group">
+                <label>Late Fine Rate per Day (Rs.)</label>
+                <input type="number" class="form-input" id="add-fine" placeholder="e.g. 250">
+            </div>
+
+            <!-- 2-Wheeler Fields -->
+            <div id="add-tw-fields">
+                <div class="form-group">
+                    <label>Engine CC</label>
+                    <input type="number" class="form-input" id="add-cc" placeholder="e.g. 350">
+                </div>
+                <div class="form-group" style="margin-top: 6px;">
+                    <label>Transmission</label>
+                    <select class="form-select" id="add-geared">
+                        <option value="1">Geared Motorcycle</option>
+                        <option value="0">Automatic / Scooter</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 4-Wheeler Fields -->
+            <div id="add-fw-fields" style="display: none;">
+                <div class="form-group">
+                    <label>Seating Capacity</label>
+                    <input type="number" class="form-input" id="add-seats" placeholder="e.g. 5">
+                </div>
+                <div class="form-group" style="margin-top: 6px;">
+                    <label>Transmission</label>
+                    <select class="form-select" id="add-trans">
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top: 6px;">
+                    <label>Fuel Type</label>
+                    <select class="form-select" id="add-fuel">
+                        <option value="Petrol">Petrol</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electric">Electric</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('add-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="submitAddVehicle()">Add to Fleet</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hybrid State Engine: Works both with local C++ web server AND fully client-side on Vercel deployment!
+    let useLocalBackend = false;
+    let currentFilter = 'all';
+
+    // Default Seed Data matching the C++ Vehicle Rental System
+    const DEFAULT_VEHICLES = [
+        { id: "TW101", brand: "Honda", model: "Activa 6G", type: "TWO_WHEELER", category: "2-Wheeler", specs: "110cc, Automatic / Scooter, Helmet Incl.", dailyRate: 350, lateFine: 100, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "TW102", brand: "Royal Enfield", model: "Classic 350", type: "TWO_WHEELER", category: "2-Wheeler", specs: "350cc, Geared, Helmet Incl.", dailyRate: 900, lateFine: 300, status: "RENTED", customerName: "Rahul Sharma", customerPhone: "9876543210", rentedForDays: 3 },
+        { id: "TW103", brand: "Yamaha", model: "R15 V4", type: "TWO_WHEELER", category: "2-Wheeler", specs: "155cc, Geared, Helmet Incl.", dailyRate: 750, lateFine: 250, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "TW104", brand: "TVS", model: "Jupiter 125", type: "TWO_WHEELER", category: "2-Wheeler", specs: "125cc, Automatic / Scooter, Helmet Incl.", dailyRate: 380, lateFine: 120, status: "IN_CLEANING", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "FW201", brand: "Maruti", model: "Swift Dzire", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "5 Seater, Manual, Petrol", dailyRate: 1600, lateFine: 500, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "FW202", brand: "Hyundai", model: "Creta SX", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "5 Seater, Automatic, Diesel", dailyRate: 2500, lateFine: 800, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 },
+        { id: "FW203", brand: "Mahindra", model: "Thar 4x4", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "4 Seater, Manual, Diesel", dailyRate: 3200, lateFine: 1000, status: "RENTED", customerName: "Priya Patel", customerPhone: "9123456789", rentedForDays: 2 },
+        { id: "FW204", brand: "Toyota", model: "Innova Crysta", type: "FOUR_WHEELER", category: "4-Wheeler", specs: "7 Seater, Automatic, Diesel", dailyRate: 3800, lateFine: 1200, status: "AVAILABLE", customerName: "", customerPhone: "", rentedForDays: 0 }
+    ];
+
+    const DEFAULT_HISTORY = [
+        { transactionId: "TXN-1000", vehicleId: "FW201", vehicleName: "Maruti Swift Dzire", category: "4-Wheeler", customerName: "Amit Kumar", customerPhone: "9988776655", bookedDays: 2, actualDays: 3, overdueDays: 1, dailyRate: 1600, baseFare: 3200, totalFine: 500, totalBill: 3700 }
+    ];
+
+    let fleetData = [];
+    let cleaningQueue = [];
+    let transactionHistory = [];
+    let nextTxnSeq = 1002;
+
+    function initClientEngine() {
+        const storedFleet = localStorage.getItem('vrs_fleet');
+        const storedHistory = localStorage.getItem('vrs_history');
+        const storedQueue = localStorage.getItem('vrs_queue');
+
+        fleetData = storedFleet ? JSON.parse(storedFleet) : JSON.parse(JSON.stringify(DEFAULT_VEHICLES));
+        transactionHistory = storedHistory ? JSON.parse(storedHistory) : JSON.parse(JSON.stringify(DEFAULT_HISTORY));
+        
+        if (storedQueue) {
+            cleaningQueue = JSON.parse(storedQueue);
+        } else {
+            cleaningQueue = [{ id: "TW104", name: "TVS Jupiter 125", category: "2-Wheeler", specs: "125cc, Automatic / Scooter, Helmet Incl." }];
+        }
+    }
+
+    function saveClientState() {
+        if (!useLocalBackend) {
+            localStorage.setItem('vrs_fleet', JSON.stringify(fleetData));
+            localStorage.setItem('vrs_history', JSON.stringify(transactionHistory));
+            localStorage.setItem('vrs_queue', JSON.stringify(cleaningQueue));
+        }
+    }
+
+    async function checkBackend() {
+        try {
+            const res = await fetch('/api/stats', { signal: AbortSignal.timeout(1500) });
+            if (res.ok) {
+                useLocalBackend = true;
+                document.getElementById('env-badge-text').innerText = 'Localhost:8080 C++ Active';
+                document.getElementById('mode-badge').innerText = '⚡ C++ Native Server';
+            } else {
+                throw new Error('Not local backend');
+            }
+        } catch (e) {
+            useLocalBackend = false;
+            document.getElementById('env-badge-text').innerText = 'Cloud Active (Vercel)';
+            document.getElementById('mode-badge').innerText = '🚀 Client Engine Mode';
+            initClientEngine();
+        }
+    }
+
+    async function loadData() {
+        if (useLocalBackend) {
+            try {
+                const [vRes, sRes, qRes, hRes] = await Promise.all([
+                    fetch('/api/vehicles'),
+                    fetch('/api/stats'),
+                    fetch('/api/cleaning-bay'),
+                    fetch('/api/history')
+                ]);
+                fleetData = await vRes.json();
+                const stats = await sRes.json();
+                const queue = await qRes.json();
+                const history = await hRes.json();
+
+                renderStats(stats);
+                renderFleetCards();
+                renderCleaningBay(queue);
+                renderHistoryTable(history);
+                return;
+            } catch (err) {
+                console.warn('Backend disconnected, falling back to client mode');
+                useLocalBackend = false;
+                initClientEngine();
+            }
+        }
+
+        // Client-side computation
+        const total = fleetData.length;
+        const available = fleetData.filter(v => v.status === 'AVAILABLE').length;
+        const rented = fleetData.filter(v => v.status === 'RENTED').length;
+        const cleaning = cleaningQueue.length;
+        const revenue = transactionHistory.reduce((acc, t) => acc + t.totalBill, 0);
+
+        renderStats({ total, available, rented, cleaning, revenue });
+        renderFleetCards();
+        renderCleaningBay(cleaningQueue);
+        renderHistoryTable(transactionHistory);
+    }
+
+    function renderStats(stats) {
+        document.getElementById('stat-total').innerText = stats.total;
+        document.getElementById('stat-available').innerText = stats.available;
+        document.getElementById('stat-rented').innerText = stats.rented;
+        document.getElementById('stat-cleaning').innerText = stats.cleaning;
+        document.getElementById('tab-cleaning-count').innerText = stats.cleaning;
+        document.getElementById('stat-revenue').innerText = 'Rs. ' + stats.revenue.toLocaleString();
+    }
+
+    function renderFleetCards() {
+        const grid = document.getElementById('vehicle-grid');
+        grid.innerHTML = '';
+
+        const filtered = fleetData.filter(v => {
+            if (currentFilter === 'two') return v.type === 'TWO_WHEELER';
+            if (currentFilter === 'four') return v.type === 'FOUR_WHEELER';
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No vehicles found for this category.</div>';
+            return;
+        }
+
+        filtered.forEach(v => {
+            const card = document.createElement('div');
+            card.className = 'v-card';
+
+            const statusClass = v.status === 'AVAILABLE' ? 'status-AVAILABLE' :
+                               v.status === 'RENTED' ? 'status-RENTED' : 'status-CLEANING';
+
+            let actionBtn = '';
+            if (v.status === 'AVAILABLE') {
+                actionBtn = `<button class="btn btn-primary" onclick="quickRent('${v.id}')">Rent Now</button>`;
+            } else if (v.status === 'RENTED') {
+                actionBtn = `<button class="btn btn-warning" onclick="quickReturn('${v.id}')">Process Return</button>`;
+            } else {
+                actionBtn = `<button class="btn btn-outline" onclick="cleanNextVehicle()">In Cleaning Bay</button>`;
+            }
+
+            let rentalHtml = '';
+            if (v.status === 'RENTED') {
+                rentalHtml = `
+                    <div class="rental-info-box">
+                        <strong>Rented to:</strong> ${v.customerName}<br>
+                        <strong>Duration:</strong> ${v.rentedForDays} day(s) (${v.customerPhone || 'N/A'})
+                    </div>
+                `;
+            } else if (v.status === 'IN_CLEANING') {
+                rentalHtml = `
+                    <div class="rental-info-box" style="border-left-color: var(--blue); background: rgba(6,182,212,0.1);">
+                        <strong>Status:</strong> Awaiting wash in FIFO queue
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div>
+                    <div class="v-header">
+                        <div>
+                            <span class="v-id">${v.id}</span>
+                            <div class="v-title">${v.brand} ${v.model}</div>
+                            <span class="v-cat-badge">${v.category}</span>
+                        </div>
+                        <span class="badge-status ${statusClass}">${v.status.replace('_', ' ')}</span>
+                    </div>
+
+                    <div class="v-specs">⚙ ${v.specs}</div>
+                    ${rentalHtml}
+
+                    <div class="v-rates">
+                        <div class="rate-item">
+                            <span>Daily Rate</span>
+                            <strong>Rs. ${v.dailyRate}</strong>
+                        </div>
+                        <div class="rate-item">
+                            <span>Late Fine / Day</span>
+                            <strong style="color: #fbbf24;">Rs. ${v.lateFine}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="v-actions">
+                    ${actionBtn}
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+    }
+
+    function renderCleaningBay(queue) {
+        const container = document.getElementById('queue-list');
+        container.innerHTML = '';
+
+        if (!queue || queue.length === 0) {
+            container.innerHTML = '<div class="empty-state">Cleaning Bay is currently empty. All vehicles are sanitized & ready!</div>';
+            return;
+        }
+
+        queue.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'queue-item';
+            div.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <span class="queue-pos">#${idx + 1}</span>
+                    <div>
+                        <strong>${item.id} - ${item.name}</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">${item.category} | ${item.specs}</div>
+                    </div>
+                </div>
+                <span class="badge-status status-CLEANING">Queued</span>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function renderHistoryTable(history) {
+        const tbody = document.getElementById('history-tbody');
+        tbody.innerHTML = '';
+
+        if (!history || history.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No rental records yet.</td></tr>';
+            return;
+        }
+
+        history.forEach(h => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${h.transactionId}</strong></td>
+                <td>${h.vehicleId} (${h.vehicleName})</td>
+                <td>${h.category}</td>
+                <td>${h.customerName}</td>
+                <td>${h.bookedDays}d</td>
+                <td>${h.actualDays}d</td>
+                <td>Rs. ${h.baseFare}</td>
+                <td style="color: ${h.totalFine > 0 ? '#f87171' : 'inherit'}">Rs. ${h.totalFine}</td>
+                <td><strong>Rs. ${h.totalBill}</strong></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function switchTab(tab) {
+        currentFilter = tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+
+        document.getElementById('fleet-view').style.display = (tab === 'cleaning' || tab === 'history') ? 'none' : 'block';
+        document.getElementById('cleaning-view').style.display = (tab === 'cleaning') ? 'block' : 'none';
+        document.getElementById('history-view').style.display = (tab === 'history') ? 'block' : 'none';
+
+        if (tab !== 'cleaning' && tab !== 'history') {
+            renderFleetCards();
+        }
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function openRentModal(preselectId) {
+        const select = document.getElementById('rent-vehicle-select');
+        select.innerHTML = '';
+        const avail = fleetData.filter(v => v.status === 'AVAILABLE');
+
+        if (avail.length === 0) {
+            alert('No vehicles currently available for rent!');
+            return;
+        }
+
+        avail.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.innerText = `${v.id} - ${v.brand} ${v.model} (Rs. ${v.dailyRate}/day)`;
+            if (preselectId && v.id === preselectId) opt.selected = true;
+            select.appendChild(opt);
+        });
+
+        updateRentEstimate();
+        openModal('rent-modal');
+    }
+
+    function quickRent(id) { openRentModal(id); }
+
+    function updateRentEstimate() {
+        const selId = document.getElementById('rent-vehicle-select').value;
+        const days = parseInt(document.getElementById('rent-days').value) || 1;
+        const v = fleetData.find(x => x.id === selId);
+
+        if (v) {
+            document.getElementById('rent-daily-rate').innerText = `Rs. ${v.dailyRate}/day`;
+            document.getElementById('rent-fine-rate').innerText = `Rs. ${v.lateFine}/day`;
+            document.getElementById('rent-est-total').innerText = `Rs. ${(v.dailyRate * days).toFixed(2)}`;
+        }
+    }
+
+    async function submitRent() {
+        const vehicleId = document.getElementById('rent-vehicle-select').value;
+        const customerName = document.getElementById('rent-cust-name').value.trim();
+        const customerPhone = document.getElementById('rent-cust-phone').value.trim();
+        const days = parseInt(document.getElementById('rent-days').value) || 1;
+
+        if (!customerName) {
+            alert('Please enter customer name');
+            return;
+        }
+
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/rent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehicleId, customerName, customerPhone, days })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal('rent-modal');
+                    resetRentForm();
+                    loadData();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+                return;
+            } catch (e) {}
+        }
+
+        // Client engine fallback
+        const v = fleetData.find(x => x.id === vehicleId);
+        if (v && v.status === 'AVAILABLE') {
+            v.status = 'RENTED';
+            v.customerName = customerName;
+            v.customerPhone = customerPhone;
+            v.rentedForDays = days;
+            saveClientState();
+            closeModal('rent-modal');
+            resetRentForm();
+            loadData();
+        }
+    }
+
+    function resetRentForm() {
+        document.getElementById('rent-cust-name').value = '';
+        document.getElementById('rent-cust-phone').value = '';
+    }
+
+    function openReturnModal(preselectId) {
+        const select = document.getElementById('return-vehicle-select');
+        select.innerHTML = '';
+        const rented = fleetData.filter(v => v.status === 'RENTED');
+
+        if (rented.length === 0) {
+            alert('No vehicles currently rented out!');
+            return;
+        }
+
+        rented.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.innerText = `${v.id} - ${v.brand} ${v.model} (${v.customerName})`;
+            if (preselectId && v.id === preselectId) opt.selected = true;
+            select.appendChild(opt);
+        });
+
+        updateReturnCalculation();
+        openModal('return-modal');
+    }
+
+    function quickReturn(id) { openReturnModal(id); }
+
+    function updateReturnCalculation() {
+        const selId = document.getElementById('return-vehicle-select').value;
+        const actualDays = parseInt(document.getElementById('return-actual-days').value) || 1;
+        const v = fleetData.find(x => x.id === selId);
+
+        if (v) {
+            const bookedDays = v.rentedForDays || 1;
+            const overdue = Math.max(0, actualDays - bookedDays);
+            const baseFare = bookedDays * v.dailyRate;
+            const fine = overdue * v.lateFine;
+            const total = baseFare + fine;
+
+            document.getElementById('ret-booked-days').innerText = `${bookedDays} day(s)`;
+            document.getElementById('ret-base-fare').innerText = `Rs. ${baseFare.toFixed(2)}`;
+            document.getElementById('ret-fine').innerText = overdue > 0 ? `Rs. ${fine.toFixed(2)} (${overdue}d overdue)` : 'Rs. 0.00';
+            document.getElementById('ret-total-bill').innerText = `Rs. ${total.toFixed(2)}`;
+        }
+    }
+
+    async function submitReturn() {
+        const vehicleId = document.getElementById('return-vehicle-select').value;
+        const actualDays = parseInt(document.getElementById('return-actual-days').value) || 1;
+
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/return', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vehicleId, actualDays })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeModal('return-modal');
+                    showInvoice(data.invoice);
+                    loadData();
+                    return;
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {}
+        }
+
+        // Client engine fallback
+        const v = fleetData.find(x => x.id === vehicleId);
+        if (v && v.status === 'RENTED') {
+            const bookedDays = v.rentedForDays || 1;
+            const overdueDays = Math.max(0, actualDays - bookedDays);
+            const baseFare = bookedDays * v.dailyRate;
+            const fine = overdueDays * v.lateFine;
+            const totalBill = baseFare + fine;
+
+            const invoice = {
+                transactionId: "TXN-" + (nextTxnSeq++),
+                vehicleId: v.id,
+                vehicleName: v.brand + " " + v.model,
+                category: v.category,
+                customerName: v.customerName,
+                customerPhone: v.customerPhone,
+                bookedDays: bookedDays,
+                actualDays: actualDays,
+                overdueDays: overdueDays,
+                dailyRate: v.dailyRate,
+                baseFare: baseFare,
+                totalFine: fine,
+                totalBill: totalBill
+            };
+
+            transactionHistory.unshift(invoice);
+
+            // Move to Cleaning (FIFO Queue)
+            v.status = 'IN_CLEANING';
+            v.customerName = "";
+            v.customerPhone = "";
+            v.rentedForDays = 0;
+
+            cleaningQueue.push({
+                id: v.id,
+                name: v.brand + " " + v.model,
+                category: v.category,
+                specs: v.specs
+            });
+
+            saveClientState();
+            closeModal('return-modal');
+            showInvoice(invoice);
+            loadData();
+        }
+    }
+
+    function showInvoice(inv) {
+        const box = document.getElementById('invoice-sheet');
+        box.innerHTML = `
+            <div class="invoice-title">WHEELS & WAYS RENTAL INVOICE</div>
+            <div class="inv-row"><span>Invoice ID:</span><strong>${inv.transactionId}</strong></div>
+            <div class="inv-row"><span>Customer:</span><strong>${inv.customerName}</strong></div>
+            <div class="inv-row"><span>Phone:</span><strong>${inv.customerPhone || 'N/A'}</strong></div>
+            <div class="inv-row"><span>Vehicle:</span><strong>${inv.vehicleId} (${inv.vehicleName})</strong></div>
+            <div class="inv-row"><span>Category:</span><strong>${inv.category}</strong></div>
+            <hr style="margin: 10px 0; border: none; border-top: 1px dashed #000;">
+            <div class="inv-row"><span>Booked Duration:</span><strong>${inv.bookedDays} days @ Rs. ${inv.dailyRate}/day</strong></div>
+            <div class="inv-row"><span>Actual Duration:</span><strong>${inv.actualDays} days</strong></div>
+            <div class="inv-row"><span>Base Fare:</span><strong>Rs. ${inv.baseFare.toFixed(2)}</strong></div>
+            <div class="inv-row"><span>Overdue Days:</span><strong style="color: red;">${inv.overdueDays} day(s)</strong></div>
+            <div class="inv-row"><span>Late Return Fine:</span><strong style="color: red;">Rs. ${inv.totalFine.toFixed(2)}</strong></div>
+            <div class="inv-row inv-total"><span>TOTAL AMOUNT:</span><span>Rs. ${inv.totalBill.toFixed(2)}</span></div>
+            <p style="text-align: center; margin-top: 14px; font-size: 0.8rem; color: #555;">
+                Vehicle automatically routed to Cleaning Bay (FIFO Queue).
+            </p>
+        `;
+        openModal('invoice-modal');
+    }
+
+    async function cleanNextVehicle() {
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/clean-next', { method: 'POST' });
+                const data = await res.json();
+                alert(data.message);
+                loadData();
+                return;
+            } catch (e) {}
+        }
+
+        // Client fallback (FIFO Queue Pop)
+        if (cleaningQueue.length > 0) {
+            const next = cleaningQueue.shift();
+            const v = fleetData.find(x => x.id === next.id);
+            if (v) v.status = 'AVAILABLE';
+            saveClientState();
+            alert(`Vehicle ${next.id} (${next.name}) washed, inspected, and restored to AVAILABLE!`);
+            loadData();
+        } else {
+            alert('Cleaning bay queue is empty!');
+        }
+    }
+
+    async function cleanAllVehicles() {
+        if (useLocalBackend) {
+            try {
+                const res = await fetch('/api/clean-all', { method: 'POST' });
+                const data = await res.json();
+                alert(data.message);
+                loadData();
+                return;
+            } catch (e) {}
+        }
+
+        // Client fallback (Clean all in FIFO Queue)
+        if (cleaningQueue.length === 0) {
+            alert('Cleaning bay queue is already empty!');
+            return;
+        }
+
+        const count = cleaningQueue.length;
+        while (cleaningQueue.length > 0) {
+            const item = cleaningQueue.shift();
+            const v = fleetData.find(x => x.id === item.id);
+            if (v) v.status = 'AVAILABLE';
+        }
+        saveClientState();
+        alert(`All ${count} vehicle(s) successfully washed and marked AVAILABLE!`);
+        loadData();
+    }
+
+    function openAddVehicleModal() {
+        toggleAddFields();
+        openModal('add-modal');
+    }
+
+    function toggleAddFields() {
+        const cat = document.getElementById('add-cat').value;
+        document.getElementById('add-tw-fields').style.display = (cat === 'TWO_WHEELER') ? 'block' : 'none';
+        document.getElementById('add-fw-fields').style.display = (cat === 'FOUR_WHEELER') ? 'block' : 'none';
+    }
+
+    async function submitAddVehicle() {
+        const cat = document.getElementById('add-cat').value;
+        const id = document.getElementById('add-id').value.trim();
+        const brand = document.getElementById('add-brand').value.trim();
+        const model = document.getElementById('add-model').value.trim();
+        const dailyRate = parseFloat(document.getElementById('add-rate').value) || 0;
+        const lateFine = parseFloat(document.getElementById('add-fine').value) || 0;
+
+        if (!id || !brand || !model || dailyRate <= 0) {
+            alert('Please fill out all required fields with valid values');
+            return;
+        }
+
+        if (fleetData.some(x => x.id.toUpperCase() === id.toUpperCase())) {
+            alert(`Vehicle ID '${id}' already exists!`);
+            return;
+        }
+
+        let specs = "";
+        if (cat === 'TWO_WHEELER') {
+            const cc = parseInt(document.getElementById('add-cc').value) || 125;
+            const geared = document.getElementById('add-geared').value === '1';
+            specs = `${cc}cc, ${geared ? 'Geared' : 'Automatic / Scooter'}, Helmet Incl.`;
+        } else {
+            const seats = parseInt(document.getElementById('add-seats').value) || 5;
+            const trans = document.getElementById('add-trans').value;
+            const fuel = document.getElementById('add-fuel').value;
+            specs = `${seats} Seater, ${trans}, ${fuel}`;
+        }
+
+        const newVehicle = {
+            id: id.toUpperCase(),
+            brand,
+            model,
+            type: cat,
+            category: cat === 'TWO_WHEELER' ? '2-Wheeler' : '4-Wheeler',
+            specs,
+            dailyRate,
+            lateFine,
+            status: 'AVAILABLE',
+            customerName: '',
+            customerPhone: '',
+            rentedForDays: 0
+        };
+
+        if (useLocalBackend) {
+            try {
+                await fetch('/api/add-vehicle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newVehicle)
+                });
+            } catch (e) {}
+        }
+
+        fleetData.push(newVehicle);
+        saveClientState();
+        closeModal('add-modal');
+        alert(`Vehicle [${id.toUpperCase()}] ${brand} ${model} added to fleet!`);
+        loadData();
+    }
+
+    // Startup Sequence
+    (async function init() {
+        await checkBackend();
+        await loadData();
+    })();
+</script>
+</body>
+</html>
