@@ -1,0 +1,12 @@
+# Binaries and executables
+*.exe
+*.o
+*.obj
+*.dll
+
+# IDE and system files
+.vscode/
+.vs/
+.idea/
+Thumbs.db
+Desktop.ini
